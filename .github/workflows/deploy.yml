@@ -48,20 +48,19 @@ jobs:
       run: |
         mkdocs build
         # Clean up any symlinks or problematic files
-        find ./site -type l -delete
-        find ./site -name "*.pyc" -delete
+        find ./site -type l -delete 2>/dev/null || true
+        find ./site -name "*.pyc" -delete 2>/dev/null || true
         find ./site -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
       
     - name: Check artifact size
       run: |
         du -sh ./site
         echo "Checking for symlinks..."
-        find ./site -type l -ls || echo "No symlinks found"
+        find ./site -type l -ls 2>/dev/null || echo "No symlinks found"
         
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        name: github-pages
         path: ./site
 
   deploy:

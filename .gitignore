@@ -1,0 +1,16 @@
+.venv
+.env
+.DS_Store
+.idea
+.vscode
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+.coverage.*
+.coverage.xml
+
+# MkDocs build output
+site/
+
+uv.lock

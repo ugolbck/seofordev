@@ -37,10 +37,6 @@ plugins:
   - search
   - git-revision-date-localized:
       enable_creation_date: true
-  - git-committers:
-      repository: ugolbck/seofordev
-      branch: main
-      token: !ENV MKDOCS_GIT_COMMITTERS_APIKEY
 
 markdown_extensions:
   - pymdownx.highlight:

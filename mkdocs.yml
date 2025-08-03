@@ -64,11 +64,6 @@ nav:
   - Home: index.md
   - Installation:
     - Overview: installation/index.md
-    - Unix/Linux/macOS: installation/unix.md
-    - Windows: installation/windows.md
-    - Troubleshooting: installation/troubleshooting.md
-  - Getting Started:
-    - Quick Start: getting-started/index.md
 
 extra:
   social:

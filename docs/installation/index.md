@@ -1,63 +1,44 @@
 # Installation Overview
 
-SEOForDev is available for multiple platforms and can be installed in several ways. Choose the method that best suits your needs and operating system.
+seofor.dev is available on any Unix machine with architectures arm64 or amd64. So whether you're on MacOS, Linux, or Winsows (WSL), you're all good. We do not support native Windows installation.
 
-## Installation Methods
+## Install script
 
-### 1. Binary Downloads (Recommended)
+seofor.dev CLI can be installed with the following command:
 
-The easiest way to install SEOForDev is by downloading pre-compiled binaries from our [GitHub Releases](https://github.com/ugolbck/seofordev/releases). This method works for all supported platforms and doesn't require any additional dependencies.
-
-**Supported Platforms:**
-- Windows (x64)
-- Linux (x64)
-- macOS (x64, ARM64)
-
-
-## System Requirements
-
-- **Operating System**: Windows 10+, macOS 10.15+, or Linux (glibc 2.17+)
-- **Architecture**: x64 or ARM64 (macOS)
-
-## Quick Installation
-
-### Windows
-```powershell
-# Download and run the installer
-Invoke-WebRequest -Uri "https://github.com/ugolbck/seofordev/releases/latest/download/seofordev-windows-x64.exe" -OutFile "seofordev.exe"
-```
-
-### Linux/macOS
 ```bash
-# Download and make executable
-curl -L -o seo https://github.com/ugolbck/seofordev/releases/latest/download/seofordev-linux-x64
-chmod +x seo
-sudo mv seo /usr/local/bin/
+curl -sSfL https://seofor.dev/install.sh | bash
 ```
 
-## Verification
+The script will:
+- determine what OS and Arch you have
+- download the proper binary
+- install the binary (you may be prompted for your root user password)
+- create the persistent config file at _~/.seo/config.yml_
 
-After installation, verify that SEOForDev is working correctly:
+Once this is done, you're all set, congratulations! 🎉
+
+## Running the CLI
+
+Start by checking that the CLI is properly installed with the following command:
 
 ```bash
 seo --version
 ```
 
-You should see output similar to:
-```
-SEOForDev v0.1.0
-```
+and you should see something like that:
 
-## Next Steps
+_seo version v0.1.11_
 
-- [Unix/Linux/macOS Installation](unix.md) - Detailed instructions for Unix-based systems
-- [Windows Installation](windows.md) - Step-by-step Windows installation guide
-- [Troubleshooting](troubleshooting.md) - Common installation issues and solutions
+All good 👌 Now run the TUI (Text-based User Interface) by running
+
+```bash
+seo
+```
 
 ## Need Help?
 
 If you encounter any issues during installation, please:
 
-1. Check the [troubleshooting guide](troubleshooting.md)
-2. Review the [GitHub Issues](https://github.com/ugolbck/seofordev/issues)
-3. Join our [Discord community](https://discord.gg/seofordev) for support 
+1. Send me a DM on X (Twitter) [@ugo_builds](https://x.com/ugo_builds)
+2. Review the [GitHub Issues](https://github.com/ugolbck/seofordev/issues) or create a new one

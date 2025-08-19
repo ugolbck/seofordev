@@ -1,6 +1,19 @@
 # seofor.dev
 A CLI-first SEO tool to audit your localhost and rank from day 1.
 
+# WARNING
+
+The code in this repository does not correspond to the code from this repository's releases.
+
+The actual code for seofor.dev is located in a private repo, and is being transitioned to open-source in this repo.
+
+The code in this repository is a work in progress, and is not yet ready for production.
+
+For now, please stick to installing the TUI app from the releases with the following command:
+```
+curl -sSfL https://seofor.dev/install.sh | bash
+```
+
 ## Pre-requisites
 
 The CLI tool requires a Unix environment to run on (WSL, MacOS, Linux) with root access and `curl` installed.

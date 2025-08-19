@@ -203,7 +203,7 @@ func (m *MainMenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View implements tea.Model
 func (m *MainMenuModel) View() string {
 	if m.quitting {
-		return AppStyle.Render("Thanks for using SEO Developer Tools! 👋")
+		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, "Thanks for using SEO Developer Tools! 👋")
 	}
 
 	// If we have an active model, show it
@@ -230,94 +230,58 @@ func (m *MainMenuModel) View() string {
 		"                                              \n" +
 		"        🚀 SEO tools for indie hackers"
 
-	title := TitleStyle.Width(contentWidth).Render(asciiArt)
+	// Menu items - simplified
+	// menuItems := m.getMenuItems()
+	// var menuLines []string
+	// for i, item := range menuItems {
+	// 	if i == m.selectedIdx {
+	// 		line := fmt.Sprintf("▶ %s %s", item.icon, item.title)
+	// 		menuLines = append(menuLines, lipgloss.NewStyle().
+	// 			Background(SelectedColor).
+	// 			Foreground(lipgloss.Color("#FFFFFF")).
+	// 			Bold(true).
+	// 			Padding(0, 2).
+	// 			Render(line))
+	// 	} else {
+	// 		line := fmt.Sprintf("  %s %s", item.icon, item.title)
+	// 		menuLines = append(menuLines, line)
+	// 	}
+	// }
 
-	// Get dynamic menu items based on plan status
-	menuItems := m.getMenuItems()
+	// Main content - center the ASCII art and menu
+	// menu := lipgloss.JoinVertical(lipgloss.Center, menuLines...)
+	title := TitleStyle.Render(asciiArt)
+	mainContent := lipgloss.JoinVertical(lipgloss.Center, title)
 
-	// Menu items with consistent formatting
-	var menuLines []string
-	for i, item := range menuItems {
-		var line string
-
-		if i == m.selectedIdx {
-			// Selected item: show title and description on same line
-			line = fmt.Sprintf("▶ %s %s - %s", item.icon, item.title, item.description)
-			style := SelectedItemStyle.Width(contentWidth)
-			menuLines = append(menuLines, style.Render(line))
-		} else {
-			// Non-selected item: show just the title
-			line = fmt.Sprintf("  %s %s", item.icon, item.title)
-			style := ListItemStyle.Width(contentWidth)
-			menuLines = append(menuLines, style.Render(line))
-		}
+	// Helper bar at bottom - always visible
+	helperKeys := map[string]string{
+		"↑↓":    "Navigate",
+		"Enter": "Select",
+		"q":     "Quit",
 	}
 
-	// Menu section
-	menu := lipgloss.JoinVertical(lipgloss.Left, menuLines...)
-
-	// Status section with consistent alignment
-	var statusInfo string
-	if m.config.APIKey != "" {
-		statusInfo = fmt.Sprintf("API Key: %s", MaskAPIKey(m.config.APIKey))
-	} else {
-		statusInfo = "⚠️  API Key not configured"
+	var helperPairs []string
+	for key, desc := range helperKeys {
+		keyText := lipgloss.NewStyle().Foreground(AccentColor).Bold(true).Render(key)
+		descText := lipgloss.NewStyle().Foreground(MutedColor).Render(desc)
+		helperPairs = append(helperPairs, keyText+" "+descText)
 	}
 
-	status := lipgloss.NewStyle().
+	helperBar := lipgloss.NewStyle().
 		Foreground(MutedColor).
-		Width(contentWidth).
-		Align(lipgloss.Left). // Changed from Center to Left
-		Render(statusInfo)
+		Align(lipgloss.Center).
+		Render(lipgloss.JoinHorizontal(lipgloss.Left, helperPairs...))
 
-	// Status bar with help and credits (only show credits if user has paid plan)
-	var statusBar string
-	if m.planLoaded && m.hasPaidPlan {
-		statusBar = RenderStatusBar(map[string]string{
-			"↑↓":    "Navigate",
-			"Enter": "Select",
-			"q":     "Quit",
-		}, m.credits, m.config.APIKey != "")
-	} else {
-		statusBar = RenderKeyHelp(map[string]string{
-			"↑↓":    "Navigate",
-			"Enter": "Select",
-			"q":     "Quit",
-		})
-	}
+	// Full screen layout: center content, helper bar at bottom
+	contentHeight := m.height - 3 // Reserve space for helper bar
+	centeredContent := lipgloss.Place(m.width, contentHeight, lipgloss.Center, lipgloss.Center, mainContent)
 
-	// Update notification (if available)
-	var updateNotification string
-	if m.versionResult != nil && m.versionResult.HasUpdate {
-		updateStyle := lipgloss.NewStyle().
-			Foreground(lipgloss.Color("208")). // Orange color
-			Bold(true).
-			Width(contentWidth).
-			Align(lipgloss.Left)
-
-		updateNotification = updateStyle.Render(GetUpdateMessage(*m.versionResult))
-	}
-
-	// Create consistent layout with standardized spacing
-	var layoutComponents []string
-	layoutComponents = append(layoutComponents, title)
-	layoutComponents = append(layoutComponents, "") // Single empty line after title
-	layoutComponents = append(layoutComponents, menu)
-	layoutComponents = append(layoutComponents, "") // Single empty line after menu
-	layoutComponents = append(layoutComponents, status)
-	layoutComponents = append(layoutComponents, "") // Single empty line after status
-	layoutComponents = append(layoutComponents, statusBar)
-
-	// Add update notification if available
-	if updateNotification != "" {
-		layoutComponents = append(layoutComponents, "") // Single empty line
-		layoutComponents = append(layoutComponents, updateNotification)
-	}
-
-	layout := lipgloss.JoinVertical(lipgloss.Left, layoutComponents...)
-
-	// Apply the main app style with responsive width
-	return AppStyle.Width(contentWidth).Render(layout)
+	// Combine everything
+	return lipgloss.JoinVertical(lipgloss.Left,
+		centeredContent,
+		"",
+		helperBar,
+	)
 }
 
 // handleSelection processes menu selection
@@ -332,36 +296,36 @@ func (m *MainMenuModel) handleSelection() (tea.Model, tea.Cmd) {
 
 	// Handle based on menu item title/type
 	switch {
-	case selectedItem.title == "Localhost Audit":
-		auditMenu := NewAuditMenuModel(m.config)
-		m.activeModel = auditMenu
-		return m, auditMenu.Init()
+	// case selectedItem.title == "Localhost Audit":
+	// 	auditMenu := NewAuditMenuModel(m.config)
+	// 	m.activeModel = auditMenu
+	// 	return m, auditMenu.Init()
 
-	case selectedItem.title == "Keyword Generator" && m.planLoaded && m.hasPaidPlan:
-		keywordMenu := NewKeywordMenuModel(m.config)
-		m.activeModel = keywordMenu
-		return m, keywordMenu.Init()
+	// case selectedItem.title == "Keyword Generator" && m.planLoaded && m.hasPaidPlan:
+	// 	keywordMenu := NewKeywordMenuModel(m.config)
+	// 	m.activeModel = keywordMenu
+	// 	return m, keywordMenu.Init()
 
-	case selectedItem.title == "Keyword Generator 🔒":
-		return m, tea.Printf("🔒 Keyword Generator requires a paid plan. Please upgrade at seofor.dev")
+	// case selectedItem.title == "Keyword Generator 🔒":
+	// 	return m, tea.Printf("🔒 Keyword Generator requires a paid plan. Please upgrade at seofor.dev")
 
-	case selectedItem.title == "Content Brief for AI" && m.planLoaded && m.hasPaidPlan:
-		contentBriefMenu := NewContentBriefMenuModel(m.config)
-		m.activeModel = contentBriefMenu
-		return m, contentBriefMenu.Init()
+	// case selectedItem.title == "Content Brief for AI" && m.planLoaded && m.hasPaidPlan:
+	// 	contentBriefMenu := NewContentBriefMenuModel(m.config)
+	// 	m.activeModel = contentBriefMenu
+	// 	return m, contentBriefMenu.Init()
 
-	case selectedItem.title == "Content Brief for AI 🔒":
-		return m, tea.Printf("🔒 Content Brief Generator requires a paid plan. Please upgrade at seofor.dev")
+	// case selectedItem.title == "Content Brief for AI 🔒":
+	// 	return m, tea.Printf("🔒 Content Brief Generator requires a paid plan. Please upgrade at seofor.dev")
 
-	case selectedItem.title == "Settings":
-		settingsMenu := NewSettingsMenuModel(m.config)
-		m.activeModel = settingsMenu
-		return m, settingsMenu.Init()
+	// case selectedItem.title == "Settings":
+	// 	settingsMenu := NewSettingsMenuModel(m.config)
+	// 	m.activeModel = settingsMenu
+	// 	return m, settingsMenu.Init()
 
-	case selectedItem.title == "Help":
-		helpModel := NewHelpModel()
-		m.activeModel = helpModel
-		return m, helpModel.Init()
+	// case selectedItem.title == "Help":
+	// 	helpModel := NewHelpModel()
+	// 	m.activeModel = helpModel
+	// 	return m, helpModel.Init()
 
 	case selectedItem.title == "Quit":
 		m.quitting = true

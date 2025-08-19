@@ -1,4 +1,4 @@
-package seofordev
+package main
 
 import "github.com/ugolbck/seofordev/cmd"
 

@@ -362,17 +362,67 @@ func (m *AuditHistoryModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) 
 	return m, nil
 }
 
-// fetchAuditHistory fetches the audit history from the API
+// fetchAuditHistory fetches the audit history from local storage
 func (m *AuditHistoryModel) fetchAuditHistory() tea.Cmd {
 	return func() tea.Msg {
-		client := api.NewClient(m.config.GetEffectiveBaseURL(), m.config.APIKey)
-
-		audits, err := client.GetAuditHistory()
-		if err != nil {
-			return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to fetch audit history: %w", err)}
+		// Ensure local audit adapter is initialized
+		if localAuditAdapter == nil {
+			if err := InitializeLocalAuditAdapter(); err != nil {
+				return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to initialize local audit: %w", err)}
+			}
 		}
 
-		return AuditHistoryLoadedMsg{Audits: audits.Audits}
+		// Get audits from local storage
+		localAudits, err := localAuditAdapter.ListAudits()
+		if err != nil {
+			return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to fetch local audit history: %w", err)}
+		}
+
+		// Convert local audits to API format for compatibility
+		apiAudits := make([]api.AuditViewResponse, len(localAudits))
+		for i, localAudit := range localAudits {
+			// Convert pages to API format
+			pages := make([]api.AuditDetailPageResponse, len(localAudit.Pages))
+			for j, page := range localAudit.Pages {
+				score := 0.0
+				if page.SEOScore != nil {
+					score = *page.SEOScore
+				}
+				
+				var analyzedAt *string
+				if page.AnalyzedAt != nil {
+					timeStr := page.AnalyzedAt.Format(time.RFC3339)
+					analyzedAt = &timeStr
+				}
+
+				pages[j] = api.AuditDetailPageResponse{
+					ID:             page.ID,
+					URL:            page.URL,
+					AnalysisStatus: page.AnalysisStatus,
+					SEOScore:       score,
+					AnalyzedAt:     analyzedAt,
+					IssuesCount:    page.IssuesCount,
+				}
+			}
+
+			// Calculate overall score
+			overallScore := 0.0
+			if localAudit.OverallScore != nil {
+				overallScore = *localAudit.OverallScore
+			} else if localAudit.AvgPageScore != nil {
+				overallScore = *localAudit.AvgPageScore
+			}
+
+			apiAudits[i] = api.AuditViewResponse{
+				ID:           localAudit.ID,
+				CreatedAt:    localAudit.CreatedAt.Format(time.RFC3339),
+				Status:       localAudit.Status,
+				OverallScore: overallScore,
+				Pages:        pages,
+			}
+		}
+
+		return AuditHistoryLoadedMsg{Audits: apiAudits}
 	}
 }
 

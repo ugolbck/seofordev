@@ -606,9 +606,14 @@ func (m *PageDetailsModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 // fetchPageDetails fetches the detailed page analysis
 func (m *PageDetailsModel) fetchPageDetails() tea.Cmd {
 	return func() tea.Msg {
-		client := api.NewClient(m.config.GetEffectiveBaseURL(), m.config.APIKey)
+		// Ensure local audit adapter is initialized
+		if localAuditAdapter == nil {
+			if err := InitializeLocalAuditAdapter(); err != nil {
+				return PageDetailsMsg{Error: fmt.Errorf("failed to initialize local audit: %w", err)}
+			}
+		}
 
-		details, err := client.GetPageDetails(m.auditID, m.pageURL)
+		details, err := localAuditAdapter.GetPageDetails(m.auditID, m.pageURL)
 		if err != nil {
 			return PageDetailsMsg{Error: fmt.Errorf("failed to fetch page details: %w", err)}
 		}

@@ -411,14 +411,22 @@ type NavigateToPageDetailsMsg struct {
 // exportAuditWithDetails fetches all page details and exports them as AI prompt
 func (m *AuditDetailsModel) exportAuditWithDetails() tea.Cmd {
 	return func() tea.Msg {
-		client := api.NewClient(m.config.GetEffectiveBaseURL(), m.config.APIKey)
+		// Ensure local audit adapter is initialized
+		if localAuditAdapter == nil {
+			if err := InitializeLocalAuditAdapter(); err != nil {
+				return NotificationMsg{
+					Message: "Failed to initialize local audit system",
+					Type:    NotificationError,
+				}
+			}
+		}
 
 		var pageDetails []api.PageDetailsResponse
 		var errors []string
 
-		// Fetch details for each page
+		// Fetch details for each page from local storage
 		for _, page := range m.audit.Pages {
-			details, err := client.GetPageDetails(m.audit.ID, page.URL)
+			details, err := localAuditAdapter.GetPageDetails(m.audit.ID, page.URL)
 			if err != nil {
 				// Log the error but continue with other pages
 				errors = append(errors, fmt.Sprintf("Failed to fetch details for %s: %v", page.URL, err))

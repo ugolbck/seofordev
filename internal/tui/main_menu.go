@@ -50,34 +50,15 @@ type menuItem struct {
 	icon        string
 }
 
-// getMenuItems returns menu items with lock icons for unpaid features
+// getMenuItems returns menu items based on API key availability
 func (m *MainMenuModel) getMenuItems() []menuItem {
 	items := []menuItem{
-		{"Localhost Audit", "Audit your local website for SEO issues", "🔍"},
-		{"Settings", "Configure API key and default parameters", "⚙️"},
+		{"Localhost Audit", "Find and fix your local web server pages", "🔍"},
+		{"Keyword Generator", "Generate and research SEO keywords", "🔑"},
+		{"Content Brief for AI", "Generate content briefs for AI writing", "📄"},
+		{"Settings", "Configure API key and default parameters", "⚙️ "},
 		{"Help", "Get help and documentation", "❓"},
 		{"Quit", "Exit the application", "👋"},
-	}
-
-	// Add keyword and content brief items with lock icons if no paid plan
-	if m.planLoaded && !m.hasPaidPlan {
-		// Show locked items for non-paid users
-		items = append([]menuItem{items[0]}, append([]menuItem{
-			{"Keyword Generator 🔒", "Generate and research SEO keywords (requires paid plan)", "🔑"},
-			{"Content Brief for AI 🔒", "Generate content briefs for AI writing (requires paid plan)", "📄"},
-		}, items[1:]...)...)
-	} else if m.planLoaded && m.hasPaidPlan {
-		// Show unlocked items for paid users
-		items = append([]menuItem{items[0]}, append([]menuItem{
-			{"Keyword Generator", "Generate and research SEO keywords", "🔑"},
-			{"Content Brief for AI", "Generate content briefs for AI writing", "📄"},
-		}, items[1:]...)...)
-	} else {
-		// Loading state - show items without lock status
-		items = append([]menuItem{items[0]}, append([]menuItem{
-			{"Keyword Generator", "Generate and research SEO keywords", "🔑"},
-			{"Content Brief for AI", "Generate content briefs for AI writing", "📄"},
-		}, items[1:]...)...)
 	}
 
 	return items
@@ -203,7 +184,7 @@ func (m *MainMenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View implements tea.Model
 func (m *MainMenuModel) View() string {
 	if m.quitting {
-		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, "Thanks for using SEO Developer Tools! 👋")
+		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, "Thanks for using seofor.dev! 👋")
 	}
 
 	// If we have an active model, show it
@@ -220,6 +201,9 @@ func (m *MainMenuModel) View() string {
 		contentWidth = 160 // Maximum width for readability
 	}
 
+	// Breadcrumbs at the top left
+	breadcrumbs := BreadcrumbsStyle.Render("home")
+
 	// ASCII art title
 	asciiArt := "                 __              _            \n" +
 		"                / _|            | |           \n" +
@@ -230,57 +214,81 @@ func (m *MainMenuModel) View() string {
 		"                                              \n" +
 		"        🚀 SEO tools for indie hackers"
 
-	// Menu items - simplified
-	// menuItems := m.getMenuItems()
-	// var menuLines []string
-	// for i, item := range menuItems {
-	// 	if i == m.selectedIdx {
-	// 		line := fmt.Sprintf("▶ %s %s", item.icon, item.title)
-	// 		menuLines = append(menuLines, lipgloss.NewStyle().
-	// 			Background(SelectedColor).
-	// 			Foreground(lipgloss.Color("#FFFFFF")).
-	// 			Bold(true).
-	// 			Padding(0, 2).
-	// 			Render(line))
-	// 	} else {
-	// 		line := fmt.Sprintf("  %s %s", item.icon, item.title)
-	// 		menuLines = append(menuLines, line)
-	// 	}
-	// }
+	// Get dynamic menu items based on plan status
+	menuItems := m.getMenuItems()
 
-	// Main content - center the ASCII art and menu
-	// menu := lipgloss.JoinVertical(lipgloss.Center, menuLines...)
-	title := TitleStyle.Render(asciiArt)
-	mainContent := lipgloss.JoinVertical(lipgloss.Center, title)
+	// Menu items with consistent formatting
+	var menuLines []string
+	for i, item := range menuItems {
+		var line string
 
-	// Helper bar at bottom - always visible
-	helperKeys := map[string]string{
-		"↑↓":    "Navigate",
-		"Enter": "Select",
-		"q":     "Quit",
+		if i == m.selectedIdx {
+			// Selected item: show title and description on same line
+			line = fmt.Sprintf("▶ %s %s - %s", item.icon, item.title, item.description)
+			style := SelectedItemStyle.Width(contentWidth)
+			menuLines = append(menuLines, style.Render(line))
+		} else {
+			// Non-selected item: show just the title
+			line = fmt.Sprintf("  %s %s", item.icon, item.title)
+			style := ListItemStyle.Width(contentWidth)
+			menuLines = append(menuLines, style.Render(line))
+		}
+
+		// Add spacing between menu items (except for the last one)
+		if i < len(menuItems)-1 {
+			menuLines = append(menuLines, "")
+		}
 	}
 
+	// Menu section
+	menu := lipgloss.JoinVertical(lipgloss.Left, menuLines...)
+
+	title := TitleStyle.Render(asciiArt)
+	// Add spacing between title and menu items
+	mainContent := lipgloss.JoinVertical(lipgloss.Center, title, "", "", "", "", "", "", "", menu)
+
+	// Helper bar at bottom - always visible with consistent ordering
+	helpers := []struct {
+		key  string
+		desc string
+	}{
+		{"↑ / j", "up"},
+		{"↓ / k", "down"},
+		{"enter", "select"},
+		{"q / ctrl+c", "quit"},
+	}
+
+	// Apply style on all help pairs
 	var helperPairs []string
-	for key, desc := range helperKeys {
-		keyText := lipgloss.NewStyle().Foreground(AccentColor).Bold(true).Render(key)
-		descText := lipgloss.NewStyle().Foreground(MutedColor).Render(desc)
+	grayColor := lipgloss.Color("#9CA3AF")       // Gray color for keys
+	darkerGrayColor := lipgloss.Color("#6B7280") // Darker gray for descriptions
+
+	for _, helper := range helpers {
+		keyText := lipgloss.NewStyle().Foreground(grayColor).Render(helper.key)
+		descText := lipgloss.NewStyle().Foreground(darkerGrayColor).Render(helper.desc)
 		helperPairs = append(helperPairs, keyText+" "+descText)
 	}
 
-	helperBar := lipgloss.NewStyle().
-		Foreground(MutedColor).
-		Align(lipgloss.Center).
-		Render(lipgloss.JoinHorizontal(lipgloss.Left, helperPairs...))
+	// Join with bullet point separators
+	helpTextWithBullets := ""
+	for i, pair := range helperPairs {
+		if i > 0 {
+			helpTextWithBullets += " • "
+		}
+		helpTextWithBullets += pair
+	}
 
-	// Full screen layout: center content, helper bar at bottom
-	contentHeight := m.height - 3 // Reserve space for helper bar
-	centeredContent := lipgloss.Place(m.width, contentHeight, lipgloss.Center, lipgloss.Center, mainContent)
+	// Layout with breadcrumbs at top, centered content, helper bar at bottom
+	contentHeight := m.height - 5 // Reserve more space for breadcrumbs padding and helper bar
+	centeredContent := lipgloss.Place(m.width, contentHeight, lipgloss.Center, lipgloss.Top, mainContent)
 
-	// Combine everything
+	// Combine everything with proper padding
 	return lipgloss.JoinVertical(lipgloss.Left,
+		"", // Top padding above breadcrumbs
+		lipgloss.NewStyle().Padding(0, 2).Render(breadcrumbs),
 		centeredContent,
 		"",
-		helperBar,
+		lipgloss.NewStyle().Padding(0, 2).Render(helpTextWithBullets), // Add left padding to helpers
 	)
 }
 

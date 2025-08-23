@@ -25,8 +25,11 @@ var (
 	BorderColor = lipgloss.Color("#6B7280") // Dark gray
 
 	// Interactive colors
-	SelectedColor = lipgloss.Color("#8B5CF6") // Purple
+	SelectedColor = lipgloss.Color("#DCABF5") // Purple
 	FocusedColor  = lipgloss.Color("#06B6D4") // Cyan
+
+	// Breadcrumbs color
+	BreadcrumbsColor = lipgloss.Color("#f2d5cf") // Rosewater
 )
 
 // Base styles
@@ -58,6 +61,10 @@ var (
 			Padding(0, 1).
 			Margin(0, 1).
 			Border(lipgloss.RoundedBorder())
+
+	// Breadcrumbs style
+	BreadcrumbsStyle = lipgloss.NewStyle().
+				Foreground(BreadcrumbsColor)
 
 	SuccessStatusStyle = StatusStyle.
 				Background(SuccessColor).
@@ -96,9 +103,7 @@ var (
 			Margin(0, 0)
 
 	SelectedItemStyle = ListItemStyle.
-				Background(SelectedColor).
-				Foreground(lipgloss.Color("#FFFFFF")).
-				Bold(true)
+				Foreground(SelectedColor)
 
 	FocusedItemStyle = ListItemStyle.
 				Border(lipgloss.NormalBorder(), false, false, false, true).

@@ -57,34 +57,12 @@ Simply run 'seo' to launch the interactive interface.`,
 			os.Exit(1)
 		}
 
-		// Load configuration from config file
-		config, err := tui.LoadConfig()
-		if err != nil {
-			tui.LogError("Failed to load configuration: %v", err)
-			fmt.Printf("❌ Failed to load configuration: %v\n", err)
-			os.Exit(1)
-		}
-
 		// Check for updates (don't block startup if this fails)
 		versionResult := tui.CheckForUpdates()
 
-		var startModel tea.Model
-
-		// Check if API key is set in config and validate it
-		if config.APIKey != "" {
-			// Validate the existing API key
-			_, err := tui.ValidateAPIKeyWithServer(config.APIKey, config.GetEffectiveBaseURL())
-			if err == nil {
-				// API key is valid, proceed to main menu
-				startModel = tui.NewMainMenuModelWithVersionCheck(versionResult)
-			} else {
-				// API key is invalid, start with gatekeeper
-				startModel = tui.NewAPIKeyGatekeeperModel(config)
-			}
-		} else {
-			// No API key set, start with gatekeeper
-			startModel = tui.NewAPIKeyGatekeeperModel(config)
-		}
+		// Always start with main menu - API key is now optional
+		// Configuration loading is now handled inside the main menu model
+		startModel := tui.NewMainMenuModelWithVersionCheck(versionResult)
 
 		// Configure tea program
 		p := tea.NewProgram(

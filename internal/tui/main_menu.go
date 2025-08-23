@@ -49,33 +49,27 @@ type menuItem struct {
 	icon        string
 }
 
-// getMenuItems returns menu items with lock icons for unpaid features
+// getMenuItems returns menu items with lock icons for premium features without API key
 func (m *MainMenuModel) getMenuItems() []menuItem {
 	items := []menuItem{
 		{"Localhost Audit", "Audit your local website for SEO issues", "🔍"},
-		{"Settings", "Configure API key and default parameters", "⚙️ "},
+		{"Settings", "Configure API key for premium features and other settings", "⚙️ "},
 		{"Help", "Get help and documentation", "❓"},
 		{"Quit", "Exit the application", "👋"},
 	}
 
-	// Add keyword and content brief items with lock icons if no paid plan
-	if m.planLoaded && !m.hasPaidPlan {
-		// Show locked items for non-paid users
-		items = append([]menuItem{items[0]}, append([]menuItem{
-			{"Keyword Generator 🔒", "Generate and research SEO keywords (requires paid plan)", "🔑"},
-			{"Content Brief for AI 🔒", "Generate content briefs for AI writing (requires paid plan)", "📄"},
-		}, items[1:]...)...)
-	} else if m.planLoaded && m.hasPaidPlan {
-		// Show unlocked items for paid users
+	// Add keyword and content brief items based on API key presence
+	if m.config.APIKey != "" {
+		// API key present - show unlocked premium features
 		items = append([]menuItem{items[0]}, append([]menuItem{
 			{"Keyword Generator", "Generate and research SEO keywords", "🔑"},
 			{"Content Brief for AI", "Generate content briefs for AI writing", "📄"},
 		}, items[1:]...)...)
 	} else {
-		// Loading state - show items without lock status
+		// No API key - show locked premium features
 		items = append([]menuItem{items[0]}, append([]menuItem{
-			{"Keyword Generator", "Generate and research SEO keywords", "🔑"},
-			{"Content Brief for AI", "Generate content briefs for AI writing", "📄"},
+			{"Keyword Generator 🔒", "Generate and research SEO keywords (requires API key)", "🔑"},
+			{"Content Brief for AI 🔒", "Generate content briefs for AI writing (requires API key)", "📄"},
 		}, items[1:]...)...)
 	}
 
@@ -357,7 +351,7 @@ func (m *MainMenuModel) View() string {
 	if m.config.APIKey != "" {
 		statusInfo = fmt.Sprintf("API Key: %s", MaskAPIKey(m.config.APIKey))
 	} else {
-		statusInfo = "⚠️  API Key not configured"
+		statusInfo = "API Key: Not set (required for premium features only)"
 	}
 
 	status := lipgloss.NewStyle().
@@ -366,14 +360,14 @@ func (m *MainMenuModel) View() string {
 		Align(lipgloss.Left). // Changed from Center to Left
 		Render(statusInfo)
 
-	// Status bar with help and credits (only show credits if user has paid plan)
+	// Status bar with help and credits (show credits only if API key is present)
 	var statusBar string
-	if m.planLoaded && m.hasPaidPlan {
+	if m.config.APIKey != "" && m.credits >= 0 {
 		statusBar = RenderStatusBar(map[string]string{
 			"↑↓":    "Navigate",
 			"Enter": "Select",
 			"q":     "Quit",
-		}, m.credits, m.config.APIKey != "")
+		}, m.credits, true)
 	} else {
 		statusBar = RenderKeyHelp(map[string]string{
 			"↑↓":    "Navigate",
@@ -433,21 +427,27 @@ func (m *MainMenuModel) handleSelection() (tea.Model, tea.Cmd) {
 		m.activeModel = auditMenu
 		return m, auditMenu.Init()
 
-	case selectedItem.title == "Keyword Generator" && m.planLoaded && m.hasPaidPlan:
-		keywordMenu := NewKeywordMenuModel(m.config)
-		m.activeModel = keywordMenu
-		return m, keywordMenu.Init()
+	case selectedItem.title == "Keyword Generator":
+		if m.config.APIKey != "" {
+			keywordMenu := NewKeywordMenuModel(m.config)
+			m.activeModel = keywordMenu
+			return m, keywordMenu.Init()
+		}
+		return m, tea.Printf("🔒 Keyword Generator requires an API key. Please add one in Settings.")
 
 	case selectedItem.title == "Keyword Generator 🔒":
-		return m, tea.Printf("🔒 Keyword Generator requires a paid plan. Please upgrade at seofor.dev")
+		return m, tea.Printf("🔒 Keyword Generator requires an API key. Please add one in Settings.")
 
-	case selectedItem.title == "Content Brief for AI" && m.planLoaded && m.hasPaidPlan:
-		contentBriefMenu := NewContentBriefMenuModel(m.config)
-		m.activeModel = contentBriefMenu
-		return m, contentBriefMenu.Init()
+	case selectedItem.title == "Content Brief for AI":
+		if m.config.APIKey != "" {
+			contentBriefMenu := NewContentBriefMenuModel(m.config)
+			m.activeModel = contentBriefMenu
+			return m, contentBriefMenu.Init()
+		}
+		return m, tea.Printf("🔒 Content Brief Generator requires an API key. Please add one in Settings.")
 
 	case selectedItem.title == "Content Brief for AI 🔒":
-		return m, tea.Printf("🔒 Content Brief Generator requires a paid plan. Please upgrade at seofor.dev")
+		return m, tea.Printf("🔒 Content Brief Generator requires an API key. Please add one in Settings.")
 
 	case selectedItem.title == "Settings":
 		settingsMenu := NewSettingsMenuModel(m.config)

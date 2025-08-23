@@ -160,8 +160,8 @@ func (m *SimpleAuditModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Check if audit is complete (all pages processed - either complete or failed)
 		if m.isAuditComplete() {
 			m.state = StateResults
-			// Complete the audit session with the backend and refresh credits
-			return m, m.realCompleteAudit()
+			// Complete the audit session with local processing
+			return m, m.localCompleteAudit()
 		}
 
 		// Check for timeout (5 minutes max)
@@ -1138,7 +1138,7 @@ func (m *SimpleAuditModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.selectedPage--
 			m.loadingPageDetails = true
 			m.detailsScrollOffset = 0 // Reset scroll position
-			return m, m.fetchPageDetails(m.pages[m.selectedPage])
+			return m, m.localFetchPageDetails(m.pages[m.selectedPage])
 		}
 		return m, nil
 
@@ -1148,7 +1148,7 @@ func (m *SimpleAuditModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.selectedPage++
 			m.loadingPageDetails = true
 			m.detailsScrollOffset = 0 // Reset scroll position
-			return m, m.fetchPageDetails(m.pages[m.selectedPage])
+			return m, m.localFetchPageDetails(m.pages[m.selectedPage])
 		}
 		return m, nil
 
@@ -1158,14 +1158,14 @@ func (m *SimpleAuditModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.loadingPageDetails = true
 			m.detailsScrollOffset = 0 // Reset scroll position
 			// Fetch detailed page analysis
-			return m, m.fetchPageDetails(m.pages[m.selectedPage])
+			return m, m.localFetchPageDetails(m.pages[m.selectedPage])
 		}
 		return m, nil
 
 	case "e":
 		if m.state == StateResults {
 			// Export all pages with their details to clipboard as AI prompt
-			return m, m.exportAllPagesToClipboard()
+			return m, m.localExportAllPagesToClipboard()
 		} else if m.state == StateDetails && m.currentPageDetails != nil {
 			// Export current page details to clipboard as AI prompt
 			return m, ExportPageDetailsToClipboardWithNotification(m.currentPageDetails)
@@ -1210,14 +1210,14 @@ func (m *SimpleAuditModel) renderError() string {
 	)
 }
 
-// Real API methods using actual backend integration
+// Local audit methods using local processing
 
 func (m *SimpleAuditModel) startAudit() tea.Cmd {
-	return m.realStartAudit()
+	return m.localStartAudit()
 }
 
 func (m *SimpleAuditModel) pollProgress() tea.Cmd {
-	return m.realPollProgress()
+	return m.localPollProgress()
 }
 
 // Message types for the simplified model
@@ -1249,109 +1249,6 @@ type (
 	}
 )
 
-// fetchPageDetails fetches detailed analysis for a specific page
-func (m *SimpleAuditModel) fetchPageDetails(page PageSummary) tea.Cmd {
-	return func() tea.Msg {
-		client := api.NewClient(m.config.GetEffectiveBaseURL(), m.config.APIKey)
+// fetchPageDetails is now replaced by localFetchPageDetails in local_integration.go
 
-		// Use URL as page identifier (backend should handle URL-based lookup)
-		details, err := client.GetPageDetails(m.auditID, page.URL)
-		if err != nil {
-			return PageDetailsMsg{Error: fmt.Errorf("failed to fetch page details: %w", err)}
-		}
-
-		return PageDetailsMsg{Details: details}
-	}
-}
-
-// fetchCredits fetches the current credit balance from the API
-// exportAllPagesToClipboard fetches all page details and exports them as AI prompt
-func (m *SimpleAuditModel) exportAllPagesToClipboard() tea.Cmd {
-	return func() tea.Msg {
-		LogInfo("Starting export of %d pages from live audit %s", len(m.pages), m.auditID)
-
-		client := api.NewClient(m.config.GetEffectiveBaseURL(), m.config.APIKey)
-
-		var pageDetails []api.PageDetailsResponse
-		var errors []string
-
-		// Fetch details for each page
-		for i, page := range m.pages {
-			LogDebug("Fetching details for page %d/%d: %s", i+1, len(m.pages), page.URL)
-			details, err := client.GetPageDetails(m.auditID, page.URL)
-			LogAPICall("GET", fmt.Sprintf("/api/audit/%s/page-details?url=%s", m.auditID, page.URL), err)
-
-			if err != nil {
-				// Log the error but continue with other pages
-				errorMsg := fmt.Sprintf("Failed to fetch details for %s: %v", page.URL, err)
-				errors = append(errors, errorMsg)
-				LogError("Page details fetch failed: %s", errorMsg)
-				continue
-			}
-			// Count actual failed checks
-			failedChecks := 0
-			for _, check := range details.Page.Checks {
-				if !check.Passed {
-					failedChecks++
-				}
-			}
-
-			LogDebug("Successfully fetched details for %s: API issues_count=%d, actual failed checks=%d, total checks=%d, score %.1f",
-				page.URL, details.Page.IssuesCount, failedChecks, len(details.Page.Checks), details.Page.SEOScore)
-
-			// Log a few example checks for debugging
-			if len(details.Page.Checks) > 0 {
-				LogDebug("Sample checks for %s:", page.URL)
-				for i, check := range details.Page.Checks {
-					if i >= 3 { // Only log first 3 checks to avoid spam
-						break
-					}
-					LogDebug("  Check %d: %s = %t (weight: %d, message: %s)", i+1, check.CheckName, check.Passed, check.Weight, check.Message)
-				}
-			}
-
-			pageDetails = append(pageDetails, *details)
-		}
-
-		// Export to clipboard
-		if len(pageDetails) > 0 {
-			LogInfo("Exporting %d pages with detailed analysis", len(pageDetails))
-			err := ExportMultiplePagesToClipboard(pageDetails)
-			LogExport("live audit with details", len(pageDetails), err)
-
-			if err != nil {
-				return NotificationMsg{
-					Message: "Failed to copy AI prompt to clipboard",
-					Type:    NotificationError,
-				}
-			}
-
-			message := fmt.Sprintf("AI prompt for %d page(s) copied to clipboard successfully!", len(pageDetails))
-			return NotificationMsg{
-				Message: message,
-				Type:    NotificationSuccess,
-			}
-		} else {
-			// If no page details were fetched, create a fallback export with basic info
-			LogError("No page details could be fetched, creating fallback export")
-			fallbackPrompt := fmt.Sprintf("Failed to fetch detailed page analysis. API errors:\n%s\n\nBasic page summary:\n", strings.Join(errors, "\n"))
-			for i, page := range m.pages {
-				fallbackPrompt += fmt.Sprintf("%d. %s - Score: %d, Issues: %d\n", i+1, page.URL, page.Score, page.Issues)
-			}
-			err := ExportToClipboard(fallbackPrompt)
-			LogExport("live audit fallback", len(m.pages), err)
-
-			if err != nil {
-				return NotificationMsg{
-					Message: "Failed to copy AI prompt to clipboard",
-					Type:    NotificationError,
-				}
-			}
-
-			return NotificationMsg{
-				Message: "AI prompt (basic summary) copied to clipboard successfully!",
-				Type:    NotificationSuccess,
-			}
-		}
-	}
-}
+// exportAllPagesToClipboard is now replaced by localExportAllPagesToClipboard in local_integration.go

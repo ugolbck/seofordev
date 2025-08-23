@@ -95,11 +95,11 @@ func (m *AuditMenuModel) View() string {
 	if m.config.APIKey != "" {
 		apiStatus = lipgloss.NewStyle().
 			Foreground(SuccessColor).
-			Render("✅ API Key configured")
+			Render("✅ API Key configured (premium features available)")
 	} else {
 		apiStatus = lipgloss.NewStyle().
-			Foreground(ErrorColor).
-			Render("❌ API Key not set (go to Settings)")
+			Foreground(MutedColor).
+			Render("ℹ️  API Key not set (audits work without API key)")
 	}
 
 	// Menu items with consistent formatting
@@ -176,19 +176,11 @@ func (m *AuditMenuModel) renderDefaultSettings(contentWidth int) string {
 func (m *AuditMenuModel) handleSelection() (tea.Model, tea.Cmd) {
 	switch m.selectedIdx {
 	case 0: // New Audit
-		if m.config.APIKey == "" {
-			return m, tea.Printf("❌ Please configure your API key in Settings first")
-		}
-
 		// Create new audit with default settings
 		newAuditModel := NewNewAuditModel(m.config)
 		return newAuditModel, newAuditModel.Init()
 
 	case 1: // New Audit (Single Page)
-		if m.config.APIKey == "" {
-			return m, tea.Printf("❌ Please configure your API key in Settings first")
-		}
-
 		// Create single page audit model
 		singlePageAuditModel := NewSinglePageAuditModel(m.config)
 		return singlePageAuditModel, singlePageAuditModel.Init()

@@ -1,0 +1,34 @@
+version: 2
+project_name: seofordev
+
+builds:
+  - id: seofordev
+    binary: seo
+    main: .
+    # Only target the typical platforms: Linux, macOS, and Windows
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - "-s"
+      - "-w"
+      - "-X github.com/ugolbck/seofordev-cli/internal/version.Version={{.Tag}}"
+
+archives:
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+    # Optionally allow mixed binary counts to avoid platform mismatch errors
+    allow_different_binary_count: true
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  github:
+    owner: ugolbck
+    name: seofordev

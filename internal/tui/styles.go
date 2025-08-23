@@ -25,11 +25,8 @@ var (
 	BorderColor = lipgloss.Color("#6B7280") // Dark gray
 
 	// Interactive colors
-	SelectedColor = lipgloss.Color("#DCABF5") // Purple
+	SelectedColor = lipgloss.Color("#8B5CF6") // Purple
 	FocusedColor  = lipgloss.Color("#06B6D4") // Cyan
-
-	// Breadcrumbs color
-	BreadcrumbsColor = lipgloss.Color("#f2d5cf") // Rosewater
 )
 
 // Base styles
@@ -61,10 +58,6 @@ var (
 			Padding(0, 1).
 			Margin(0, 1).
 			Border(lipgloss.RoundedBorder())
-
-	// Breadcrumbs style
-	BreadcrumbsStyle = lipgloss.NewStyle().
-				Foreground(BreadcrumbsColor)
 
 	SuccessStatusStyle = StatusStyle.
 				Background(SuccessColor).
@@ -103,7 +96,9 @@ var (
 			Margin(0, 0)
 
 	SelectedItemStyle = ListItemStyle.
-				Foreground(SelectedColor)
+				Background(SelectedColor).
+				Foreground(lipgloss.Color("#FFFFFF")).
+				Bold(true)
 
 	FocusedItemStyle = ListItemStyle.
 				Border(lipgloss.NormalBorder(), false, false, false, true).
@@ -209,39 +204,39 @@ const (
 )
 
 // Helper functions for styling
-// func StatusIcon(status PageStatus) string {
-// 	switch status {
-// 	case StatusPending:
-// 		return IconPending
-// 	case StatusCrawling:
-// 		return IconCrawling
-// 	case StatusAnalyzing:
-// 		return IconAnalyzing
-// 	case StatusCompleted:
-// 		return IconCompleted
-// 	case StatusError:
-// 		return IconError
-// 	case StatusWarning:
-// 		return IconWarning
-// 	default:
-// 		return IconPending
-// 	}
-// }
+func StatusIcon(status PageStatus) string {
+	switch status {
+	case StatusPending:
+		return IconPending
+	case StatusCrawling:
+		return IconCrawling
+	case StatusAnalyzing:
+		return IconAnalyzing
+	case StatusCompleted:
+		return IconCompleted
+	case StatusError:
+		return IconError
+	case StatusWarning:
+		return IconWarning
+	default:
+		return IconPending
+	}
+}
 
-// func StatusColor(status PageStatus) lipgloss.Color {
-// 	switch status {
-// 	case StatusCompleted:
-// 		return SuccessColor
-// 	case StatusError:
-// 		return ErrorColor
-// 	case StatusWarning:
-// 		return WarningColor
-// 	case StatusCrawling, StatusAnalyzing:
-// 		return InfoColor
-// 	default:
-// 		return MutedColor
-// 	}
-// }
+func StatusColor(status PageStatus) lipgloss.Color {
+	switch status {
+	case StatusCompleted:
+		return SuccessColor
+	case StatusError:
+		return ErrorColor
+	case StatusWarning:
+		return WarningColor
+	case StatusCrawling, StatusAnalyzing:
+		return InfoColor
+	default:
+		return MutedColor
+	}
+}
 
 func ScoreColor(score int) lipgloss.Color {
 	switch {
@@ -402,24 +397,24 @@ func RenderStatusBar(helpBindings map[string]string, credits int, hasAPIKey bool
 }
 
 // RenderNotification renders a notification message with appropriate styling
-// func RenderNotification(msg NotificationMsg) string {
-// 	var style lipgloss.Style
-// 	var icon string
+func RenderNotification(msg NotificationMsg) string {
+	var style lipgloss.Style
+	var icon string
 
-// 	switch msg.Type {
-// 	case NotificationSuccess:
-// 		style = SuccessNotificationStyle
-// 		icon = "✅"
-// 	case NotificationError:
-// 		style = ErrorNotificationStyle
-// 		icon = "❌"
-// 	case NotificationInfo:
-// 		style = InfoNotificationStyle
-// 		icon = "ℹ️"
-// 	default:
-// 		style = NotificationStyle
-// 		icon = "•"
-// 	}
+	switch msg.Type {
+	case NotificationSuccess:
+		style = SuccessNotificationStyle
+		icon = "✅"
+	case NotificationError:
+		style = ErrorNotificationStyle
+		icon = "❌"
+	case NotificationInfo:
+		style = InfoNotificationStyle
+		icon = "ℹ️"
+	default:
+		style = NotificationStyle
+		icon = "•"
+	}
 
-// return style.Render(fmt.Sprintf("%s %s", icon, msg.Message))
-// }
+	return style.Render(fmt.Sprintf("%s %s", icon, msg.Message))
+}

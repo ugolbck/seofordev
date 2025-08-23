@@ -11,28 +11,34 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/ugolbck/seofordev/internal/playwright"
 	"github.com/ugolbck/seofordev/internal/tui"
-	"github.com/ugolbck/seofordev/internal/tui/logger"
 	"github.com/ugolbck/seofordev/internal/version"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "oss_seo",
+	Use:     "seo",
 	Version: version.GetVersion(),
-	Short:   "Open-source SEO for indie hackers",
-	Long:    `Open-source SEO tools for indie hackers and developers. Run 'seo'.`,
+	Short:   "SEO tools for indie hackers - interactive TUI interface",
+	Long: `SEO tools for indie hackers - an interactive command line interface for SEO tasks.
+
+This tool provides a unified interface for:
+- Website auditing - export AI prompts to fix your site in one click
+- Keyword suggestions 
+- Content generation - export AI prompt to generate content for your site (coming soon)
+
+Simply run 'seo' to launch the interactive interface.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Initialize logging (only in debug mode)
-		if err := logger.InitLogger(); err != nil {
+		if err := tui.InitLogger(); err != nil {
 			// Only show error if we're actually trying to log (debug mode)
 			if os.Getenv("SEO_DEBUG") == "1" || os.Getenv("DEBUG") == "1" {
 				fmt.Printf("⚠️  Failed to initialize debug logging: %v\n", err)
 			}
 			// Continue without logging rather than failing
 		}
-		defer logger.CloseLogger()
+		defer tui.CloseLogger()
 
-		logger.LogInfo("Application starting")
+		tui.LogInfo("Application starting")
 
 		// Ensure Playwright is installed before starting TUI
 		if err := playwright.EnsurePlaywrightInstalled(); err != nil {
@@ -51,14 +57,34 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Load configuration from config file
+		config, err := tui.LoadConfig()
+		if err != nil {
+			tui.LogError("Failed to load configuration: %v", err)
+			fmt.Printf("❌ Failed to load configuration: %v\n", err)
+			os.Exit(1)
+		}
+
 		// Check for updates (don't block startup if this fails)
 		versionResult := tui.CheckForUpdates()
 
-		// Define the start model
 		var startModel tea.Model
 
-		// Create the start model with the version check result
-		startModel = tui.NewMainMenuModelWithVersionCheck(versionResult)
+		// Check if API key is set in config and validate it
+		if config.APIKey != "" {
+			// Validate the existing API key
+			_, err := tui.ValidateAPIKeyWithServer(config.APIKey, config.GetEffectiveBaseURL())
+			if err == nil {
+				// API key is valid, proceed to main menu
+				startModel = tui.NewMainMenuModelWithVersionCheck(versionResult)
+			} else {
+				// API key is invalid, start with gatekeeper
+				startModel = tui.NewAPIKeyGatekeeperModel(config)
+			}
+		} else {
+			// No API key set, start with gatekeeper
+			startModel = tui.NewAPIKeyGatekeeperModel(config)
+		}
 
 		// Configure tea program
 		p := tea.NewProgram(
@@ -84,5 +110,5 @@ func Execute() {
 }
 
 func init() {
-	// No CLI flags needed - everything is handled through the TUI (for now)
+	// No CLI flags needed - everything is handled through the TUI
 }

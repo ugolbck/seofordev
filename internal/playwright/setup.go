@@ -84,13 +84,13 @@ func CheckPlaywrightInstalled() error {
 	// Check if installation marker exists
 	versionMarker := filepath.Join(driverDir, "VERSION_v"+playwrightVersion)
 	if _, err := os.Stat(versionMarker); os.IsNotExist(err) {
-		return fmt.Errorf("playwright installation not found. Please restart the application to reinstall")
+		return fmt.Errorf("Playwright installation not found. Please restart the application to reinstall")
 	}
 
 	// Check if browser directory exists
 	browserPath := filepath.Join(driverDir, "browsers")
 	if _, err := os.Stat(browserPath); os.IsNotExist(err) {
-		return fmt.Errorf("playwright browsers not found. Please restart the application to reinstall")
+		return fmt.Errorf("Playwright browsers not found. Please restart the application to reinstall")
 	}
 
 	return nil

@@ -1,16 +1,60 @@
+# Go artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+seo
+seofordev
+
+# Go build cache
+.cache/
+
+# Go module proxy cache
+pkg/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Python virtual environment (for docs)
 .venv
 .env
+
+# IDE files
 .DS_Store
 .idea
 .vscode
+
+# Python cache (for docs)
 .pytest_cache
 .ruff_cache
 .mypy_cache
 .coverage
 .coverage.*
 .coverage.xml
+__pycache__/
+*.py[cod]
+*$py.class
 
 # MkDocs build output
 site/
 
+# Lock files
 uv.lock
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/

@@ -1,46 +1,69 @@
-# seofor.dev
-A CLI-first SEO tool to audit your localhost and rank from day 1.
+# SEOForDev 🚀
 
-# WARNING
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ugolbck/seofordev)](https://goreportcard.com/report/github.com/ugolbck/seofordev)
+[![GitHub release](https://img.shields.io/github/release/ugolbck/seofordev.svg)](https://github.com/ugolbck/seofordev/releases/latest)
 
-The code in this repository does not correspond to the code from this repository's releases.
+A powerful CLI-first SEO tool that helps developers audit their websites and optimize for search engines from day one. Built with Go and featuring an interactive terminal interface.
 
-The actual code for seofor.dev is located in a private repo, and is being transitioned to open-source in this repo.
+## ✨ Features
 
-The code in this repository is a work in progress, and is not yet ready for production.
+### 🔓 **Free & Open Source**
+- **Website Auditing**: Comprehensive SEO analysis of your localhost
+- **Interactive TUI**: Beautiful terminal user interface built with Bubble Tea
+- **Playwright Integration**: Reliable web crawling with JavaScript support
+- **Export Results**: Generate AI-ready optimization prompts
 
-For now, please stick to installing the TUI app from the releases with the following command:
-```
+### 💎 **Premium Features** (API Key Required)
+- **Keyword Research**: Generate high-volume, low-competition keywords
+- **Content Brief Generation**: Create SEO-optimized content briefs to create quality content
+
+## 🚀 Installation
+
+### Option 1: Install Script (Recommended)
+```bash
 curl -sSfL https://seofor.dev/install.sh | bash
 ```
 
-## Pre-requisites
+### Option 2: Download Binary
+Visit our [releases page](https://github.com/ugolbck/seofordev/releases/latest) and download the appropriate binary for your platform.
 
-The CLI tool requires a Unix environment to run on (WSL, MacOS, Linux) with root access and `curl` installed.
-
-## Quick start
-
-1. install the CLI tool with:
-
-```
-curl -sSfL https://seofor.dev/install.sh | bash
+### Option 3: Build from Source
+```bash
+git clone https://github.com/ugolbck/seofordev.git
+cd seofordev
+go build -o seo .
 ```
 
-2. check that the app is installed by running it with:
+## 📋 Requirements
 
-```
-seo
-```
+- **Operating System**: macOS, Linux, or Windows (WSL)
+- **Network**: Internet connection for Playwright setup and premium features
+- **Permissions**: May require sudo/admin rights for initial Playwright installation
 
-This should also install the Playwright dependencies that are necessary to crawl your localhost site.
+## 🎯 Quick Start
 
-3. you will be prompted for an API key. Generate one from the [dashboard](https://seofor.dev/dashboard/) and paste it in.
+1. **Launch the application**:
+   ```bash
+   seo
+   ```
 
-4. Run your local web server, and check in the app's settings that the port number corresponds to your local server's port (we use 3000 by default).
+2. **First-time setup**: The app will automatically install Playwright dependencies (~150MB, one-time download)
 
-5. Start a free audit from `Localhost Audit > New Audit (Full) > Start Audit`.
+3. **Start auditing**: Navigate to `Localhost Audit > New Audit` and audit your development server
 
-6. Press `e` on the result page to export the optimization instructions to your clipboard. Paste them into your favorite AI code editor (Cursor, Claude Code, etc.) or edit your web pages by hand.
+4. **Export results**: Press `e` to copy SEO optimization prompts to your clipboard
+
+5. **Integrate with AI**: Paste the prompts into Claude Code, Cursor, or your preferred AI coding assistant
+
+## 🔑 Premium Features Setup
+
+For keyword research and content brief generation:
+
+1. Sign up at [seofor.dev/dashboard](https://seofor.dev/dashboard/)
+2. Generate an API key
+3. Enter it when prompted in the application
+4. Access premium features from the main menu
 
 ## Premium features
 
@@ -76,10 +99,46 @@ We strongly encourage you to proofread any AI-generated content, as it may make 
 6. Once you've pushed your new content online, we recommend you log in to your Google Search Console, and ask Google to index your new page URL. This should speed up the indexation process.
 
 
-## Need help?
+## 🏗️ Development
 
-If you encounter any issue with the app, the website, or payment processing, do not hesitate to email us at hey@seofor.dev or to send me a DM on [X](https://x.com/ugo_builds).
+### Building from Source
+```bash
+git clone https://github.com/ugolbck/seofordev.git
+cd seofordev
+go mod download
+go build -o seo .
+```
 
-We will do our best to fix any issue you're experiencing as fast as possible, and we are open to any feedback that could help us improve your user experience.
+### Running Tests
+```bash
+go test ./...
+```
 
-Thank you!
+### Contributing
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📚 Documentation
+
+- **API Documentation**: [docs.seofor.dev](https://docs.seofor.dev)
+- **Architecture**: See [CLAUDE.md](CLAUDE.md) for development guidance
+- **Security Policy**: [SECURITY.md](SECURITY.md)
+
+## 🆘 Support
+
+- **Issues**: [GitHub Issues](https://github.com/ugolbck/seofordev/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ugolbck/seofordev/discussions)  
+- **Email**: hey@seofor.dev
+- **Twitter**: [@ugo_builds](https://x.com/ugo_builds)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**Note**: Premium features require a subscription to seofor.dev and are subject to additional terms of service.
+
+---
+
+<div align="center">
+  <p>Made with ❤️ for developers who care about SEO</p>
+  <p><a href="https://seofor.dev">seofor.dev</a> • <a href="https://github.com/ugolbck/seofordev">GitHub</a></p>
+</div>

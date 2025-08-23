@@ -347,12 +347,12 @@ type GenerateBriefRequest struct {
 
 // GenerateBriefResponse represents the response from brief generation
 type GenerateBriefResponse struct {
-	ID           string `json:"id"` // Brief ID for polling
-	Brief        string `json:"brief"`
-	Status       string `json:"status"`
-	CreditsUsed  int    `json:"credits_used"`
-	GeneratedAt  string `json:"generated_at"`
-	TotalResults int    `json:"total_results"`
+	ID          string `json:"id"`           // Brief ID for polling
+	Brief       string `json:"brief"`
+	Status      string `json:"status"`
+	CreditsUsed int    `json:"credits_used"`
+	GeneratedAt string `json:"generated_at"`
+	TotalResults int   `json:"total_results"`
 }
 
 // BriefResponse represents the response from brief status check

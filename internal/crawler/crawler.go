@@ -122,7 +122,7 @@ func (c *Crawler) Start() error {
 func (c *Crawler) initPlaywright() error {
 	// Check if Playwright is installed (should have been installed at startup)
 	if err := pwsetup.CheckPlaywrightInstalled(); err != nil {
-		return fmt.Errorf("playwright not properly installed: %w", err)
+		return fmt.Errorf("Playwright not properly installed: %w", err)
 	}
 
 	// Set up paths for Playwright

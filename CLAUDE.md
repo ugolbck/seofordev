@@ -4,144 +4,110 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**seofor.dev** is a CLI-first SEO tool built in Go that helps indie hackers and developers audit their localhost applications and rank from day 1. The project includes:
+SEOForDev is a Go-based CLI tool for SEO analysis and optimization, featuring:
+- Interactive TUI (Terminal User Interface) built with Bubble Tea
+- Website crawling and SEO auditing capabilities using Playwright
+- API integration with seofor.dev backend for analysis
+- Keyword generation and content brief creation features
+- MkDocs-based documentation system
 
-- **Go CLI application** (`main.go`, `cmd/`, `internal/`) - Main SEO auditing tool with Terminal UI (TUI)
-- **MkDocs documentation** (`docs/`, `mkdocs.yml`) - Project documentation website
-- **Playwright integration** - Web crawling and browser automation for SEO analysis
+## Build and Development Commands
 
-⚠️ **Important**: This repository contains work-in-progress open-source code. The production code is in a private repository and is being transitioned here. Users should install from releases, not build from source.
-
-## Key Commands
-
-### Go Development
+### Go Commands
 ```bash
 # Build the application
 go build -o seo .
 
-# Run the application directly
+# Run the application
 go run .
 
-# Run with debug logging
-SEO_DEBUG=1 go run .
-DEBUG=1 go run .
-
-# Test the application
-go test ./...
-
-# Format Go code
-go fmt ./...
-
-# Vet for potential issues
-go vet ./...
-
-# Clean module cache
-go clean -modcache
-
-# Update dependencies
+# Install dependencies
 go mod tidy
+
+# Run tests (if any exist)
+go test ./...
 ```
 
-### Documentation Development
+### Documentation
 ```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Serve documentation locally (auto-reload)
+# Serve documentation locally
 mkdocs serve
 
 # Build documentation
 mkdocs build
 
-# Deploy documentation (handled by GitHub Actions)
-mkdocs gh-deploy
+# Install Python dependencies for docs
+pip install -r requirements.txt
 ```
 
-## Architecture
+## Architecture Overview
 
-### Core Components
+### Entry Point
+- `main.go`: Simple entry point that calls `cmd.Execute()`
+- `cmd/root.go`: Cobra-based CLI setup with main application logic
 
-**Entry Point**
-- `main.go` - Imports and calls `cmd.Execute()`
-- `cmd/root.go` - Root Cobra command with TUI initialization
+### Core Packages
 
-**TUI System** (`internal/tui/`)
-- `config/config.go` - Configuration management, API key validation, user settings
-- `logger/logger.go` - Debug logging system (activated with `SEO_DEBUG=1`)
-- `version.go` - Version checking and update notifications
+#### Internal Structure
+- `internal/api/`: HTTP client for seofor.dev API integration
+- `internal/crawler/`: Playwright-based web crawler for site discovery
+- `internal/playwright/`: Playwright setup and browser management
+- `internal/tui/`: Complete Bubble Tea TUI implementation
+- `internal/version/`: Version management and update checking
 
-**Web Crawling** (`internal/crawler/`)
-- `crawler.go` - Multi-threaded Playwright-based web crawler with robots.txt support
-- Configurable concurrency, depth limits, ignore patterns
-- Respects robots.txt rules for ethical crawling
+#### TUI Components
+The TUI is modular with separate files for different screens:
+- `main_menu.go`: Primary navigation interface
+- `*_menu.go`: Various feature menus (audit, keyword, content brief)
+- `*_details.go`: Detail views for results
+- `*_history.go`: Historical data views
+- `api_key_gatekeeper.go`: API key validation flow
+- `config.go`: Configuration management
+- `types.go`: Core data structures and Bubble Tea messages
 
-**Playwright Integration** (`internal/playwright/`)
-- `setup.go` - Playwright installation and browser management
-- Handles Chromium browser setup in `~/.seo/playwright/`
-- Version-aware installation with automatic cleanup
+### Key Data Structures
 
-**API Integration** (`internal/api/`)
-- Server communication for SEO analysis
-- API key authentication with seofor.dev service
+#### Audit System
+- `AuditSession`: Complete audit workflow state
+- `PageResult`: Individual page analysis results  
+- `AuditConfig`: Audit parameters and settings
+- Audit phases: SessionCreation → SiteDiscovery → CreditCheck → PageAnalysis → SessionCompletion
+
+#### API Integration
+- `Client`: HTTP client with structured request/response types
+- Credit-based system with usage tracking
+- Support for audits, keyword generation, and content briefs
+
+#### Crawler Architecture
+- Concurrent crawling with configurable workers
+- Robots.txt compliance
+- Link discovery with depth limits
+- Page normalization and deduplication
+
+## Development Notes
+
+### Environment Variables
+- `SEO_DEBUG` or `DEBUG`: Enable debug logging
+- `SEO_BASE_URL`: Override API base URL (development only)
 
 ### Configuration
-
-User configuration stored in `~/.seo/config.yml`:
-- API key for seofor.dev service
-- Default crawling settings (port, concurrency, max pages/depth)
-- Ignore patterns for URLs
-
-Environment variables:
-- `SEO_DEBUG=1` or `DEBUG=1` - Enable debug logging
-- `SEO_BASE_URL` - Override API base URL (development only)
-- `TEST_PLAYWRIGHT_DIR` - Override Playwright directory for testing
-
-### Debugging
-
-The application includes comprehensive debug logging. Enable with:
-```bash
-SEO_DEBUG=1 ./seo
-```
-
-Logs are written to `~/.seo/debug.log` when debug mode is active.
+- Config stored in user's config directory
+- API key validation on startup
+- Automatic update checking
 
 ### Dependencies
+- Bubble Tea for TUI framework
+- Cobra for CLI structure
+- Playwright for web crawling
+- YAML for configuration
+- Clipboard integration for export features
 
-Key external dependencies:
-- **Cobra** - CLI framework and command structure
-- **Bubble Tea** - Terminal UI framework for interactive interface
-- **Playwright Go** - Browser automation for web crawling
-- **gopkg.in/yaml.v3** - YAML parsing for configuration files
+### Browser Setup
+- Playwright browsers installed to custom directory
+- Headless Chromium for crawling
+- Timeout handling for page loads
 
-## Development Workflow
-
-1. **Building**: Use `go build -o seo .` to create executable
-2. **Testing**: Use `go test ./...` for unit tests
-3. **Formatting**: Always run `go fmt ./...` before committing
-4. **Documentation**: Use `mkdocs serve` for local docs development
-5. **Dependencies**: Run `go mod tidy` when adding/removing dependencies
-
-## Installation Flow
-
-Users install via:
-```bash
-curl -sSfL https://seofor.dev/install.sh | bash
-```
-
-First run triggers Playwright setup (~150MB download) with user-visible progress.
-
-## TUI Application Flow
-
-1. **Startup** - Check Playwright installation, load config, validate API key
-2. **API Key Gatekeeper** - Prompt for API key if not set/invalid
-3. **Main Menu** - Navigate between audit tools, settings, keyword research
-4. **Configuration** - Manage crawling settings, API key, app preferences
-5. **Audit Results** - Display SEO findings with export options
-
-## Important Notes
-
-- The CLI binary name is `seo` (not `oss_seo` as in code)
-- Playwright browsers are installed to `~/.seo/playwright/browsers/`
-- Configuration and logs stored in `~/.seo/` directory
-- Application requires Unix environment (WSL, macOS, Linux) with root access
-- API key required for full functionality (free tier available)
+### Error Handling
+- Structured error types for API responses
+- Graceful degradation for missing features
+- User-friendly error messages in TUI

@@ -41,6 +41,10 @@ type Crawler struct {
 	// Queue management
 	queue     chan crawlTask
 	queueOpen bool
+	
+	// Worker tracking
+	activeWorkers int
+	workerMu      sync.Mutex
 
 	// Robots.txt handling
 	robotsRules []robotsRule
@@ -83,7 +87,7 @@ func NewCrawler(baseURL string, concurrency, maxPages, maxDepth int, ignorePatte
 		IgnorePatterns: ignorePatterns,
 		visited:        make(map[string]bool),
 		results:        []PageResult{},
-		queue:          make(chan crawlTask, 100),
+		queue:          make(chan crawlTask, 1000), // Larger queue to prevent drops
 		queueOpen:      true,
 		ctx:            ctx,
 		cancel:         cancel,
@@ -169,7 +173,18 @@ func (c *Crawler) worker() {
 			if !ok {
 				return // Queue closed
 			}
+			
+			// Mark worker as active
+			c.workerMu.Lock()
+			c.activeWorkers++
+			c.workerMu.Unlock()
+			
 			c.crawlPage(task.URL, task.Depth)
+			
+			// Mark worker as inactive
+			c.workerMu.Lock()
+			c.activeWorkers--
+			c.workerMu.Unlock()
 		}
 	}
 }
@@ -191,6 +206,10 @@ func (c *Crawler) monitor() {
 			queueLen := len(c.queue)
 			queueOpen := c.queueOpen
 			c.queueMu.Unlock()
+			
+			c.workerMu.Lock()
+			activeWorkers := c.activeWorkers
+			c.workerMu.Unlock()
 
 			// Check if we've reached max pages
 			if c.MaxPages > 0 && pageCount >= c.MaxPages {
@@ -198,8 +217,9 @@ func (c *Crawler) monitor() {
 				return
 			}
 
-			// Check if queue is empty and we're done
-			if queueLen == 0 && queueOpen {
+			// Check if queue is empty AND no workers are actively processing
+			// This prevents race conditions where workers are still discovering links
+			if queueLen == 0 && activeWorkers == 0 && queueOpen {
 				c.stop()
 				return
 			}
@@ -226,13 +246,15 @@ func (c *Crawler) addToQueue(task crawlTask) bool {
 		return false
 	}
 
+	// Try to add to queue with a timeout to avoid blocking indefinitely
 	select {
 	case c.queue <- task:
 		return true
 	case <-c.ctx.Done():
 		return false
-	default:
-		// Queue full - silently skip
+	case <-time.After(100 * time.Millisecond):
+		// If queue is still full after timeout, skip this link
+		// This prevents hanging while still giving some time for queue to drain
 		return false
 	}
 }

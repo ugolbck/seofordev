@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -104,7 +105,8 @@ type AuditConfig struct {
 
 // LocalStorage handles local audit storage
 type LocalStorage struct {
-	baseDir string
+	baseDir   string
+	fileMutex sync.RWMutex // Protects file operations
 }
 
 // NewLocalStorage creates a new local storage instance
@@ -146,6 +148,9 @@ func (s *LocalStorage) CreateAudit(baseURL string, config AuditConfig) (*LocalAu
 
 // SaveAudit saves an audit to local storage
 func (s *LocalStorage) SaveAudit(audit *LocalAudit) error {
+	s.fileMutex.Lock()
+	defer s.fileMutex.Unlock()
+	
 	filename := fmt.Sprintf("%s.json", audit.ID)
 	filepath := filepath.Join(s.baseDir, filename)
 
@@ -163,6 +168,9 @@ func (s *LocalStorage) SaveAudit(audit *LocalAudit) error {
 
 // LoadAudit loads an audit from local storage
 func (s *LocalStorage) LoadAudit(auditID string) (*LocalAudit, error) {
+	s.fileMutex.RLock()
+	defer s.fileMutex.RUnlock()
+	
 	filename := fmt.Sprintf("%s.json", auditID)
 	filepath := filepath.Join(s.baseDir, filename)
 
@@ -219,11 +227,23 @@ func (s *LocalStorage) DeleteAudit(auditID string) error {
 	return nil
 }
 
-// AddPageAnalysis adds a page analysis to an audit
+// AddPageAnalysis adds a page analysis to an audit atomically
 func (s *LocalStorage) AddPageAnalysis(auditID string, page LocalPageAnalysis) error {
-	audit, err := s.LoadAudit(auditID)
+	s.fileMutex.Lock()
+	defer s.fileMutex.Unlock()
+	
+	// Load audit within the lock to ensure atomic read-modify-write
+	filename := fmt.Sprintf("%s.json", auditID)
+	filepath := filepath.Join(s.baseDir, filename)
+
+	data, err := os.ReadFile(filepath)
 	if err != nil {
-		return fmt.Errorf("failed to load audit: %w", err)
+		return fmt.Errorf("failed to read audit file: %w", err)
+	}
+
+	var audit LocalAudit
+	if err := json.Unmarshal(data, &audit); err != nil {
+		return fmt.Errorf("failed to unmarshal audit: %w", err)
 	}
 
 	// Add or update page
@@ -258,7 +278,17 @@ func (s *LocalStorage) AddPageAnalysis(auditID string, page LocalPageAnalysis) e
 		audit.AvgPageScore = &avgScore
 	}
 
-	return s.SaveAudit(audit)
+	// Save audit within the same lock
+	data, err = json.MarshalIndent(&audit, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal audit: %w", err)
+	}
+
+	if err := os.WriteFile(filepath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write audit file: %w", err)
+	}
+
+	return nil
 }
 
 // CompleteAudit marks an audit as completed and generates summary

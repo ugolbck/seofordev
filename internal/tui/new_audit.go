@@ -144,6 +144,13 @@ func (m *NewAuditModel) handleSelection() (tea.Model, tea.Cmd) {
 	// Always start the audit since there's only one button
 	m.starting = true
 
+	// Initialize the audit adapter with the current config
+	err := InitializeAuditAdapter(m.config)
+	if err != nil {
+		LogError("Failed to initialize audit adapter: %v", err)
+		// Continue with local-only mode
+	}
+
 	// Create AuditConfig from the stored config
 	auditConfig := AuditConfig{
 		Port:           m.config.DefaultPort,

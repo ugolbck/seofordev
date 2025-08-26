@@ -365,20 +365,22 @@ func (m *AuditHistoryModel) handleKeypress(msg tea.KeyMsg) (tea.Model, tea.Cmd) 
 // fetchAuditHistory fetches the audit history from local storage
 func (m *AuditHistoryModel) fetchAuditHistory() tea.Cmd {
 	return func() tea.Msg {
-		// Ensure local audit adapter is initialized
-		if localAuditAdapter == nil {
-			if err := InitializeLocalAuditAdapter(); err != nil {
-				return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to initialize local audit: %w", err)}
+		// Ensure audit adapter is initialized
+		if auditAdapter == nil || GetCurrentConfig() == nil {
+			// Initialize the audit adapter with the current config
+			err := InitializeAuditAdapter(m.config)
+			if err != nil {
+				return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to initialize audit adapter: %w", err)}
 			}
 		}
 
-		// Get audits from local storage
-		localAudits, err := localAuditAdapter.ListAudits()
+		// Get local audits only
+		localAudits, err := auditAdapter.ListAudits()
 		if err != nil {
-			return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to fetch local audit history: %w", err)}
+			return AuditHistoryLoadedMsg{Error: fmt.Errorf("failed to fetch audit history: %w", err)}
 		}
 
-		// Convert local audits to API format for compatibility
+		// Convert local audits to API format
 		apiAudits := make([]api.AuditViewResponse, len(localAudits))
 		for i, localAudit := range localAudits {
 			// Convert pages to API format
@@ -388,7 +390,7 @@ func (m *AuditHistoryModel) fetchAuditHistory() tea.Cmd {
 				if page.SEOScore != nil {
 					score = *page.SEOScore
 				}
-				
+
 				var analyzedAt *string
 				if page.AnalyzedAt != nil {
 					timeStr := page.AnalyzedAt.Format(time.RFC3339)
@@ -405,12 +407,9 @@ func (m *AuditHistoryModel) fetchAuditHistory() tea.Cmd {
 				}
 			}
 
-			// Calculate overall score
 			overallScore := 0.0
-			if localAudit.OverallScore != nil {
-				overallScore = *localAudit.OverallScore
-			} else if localAudit.AvgPageScore != nil {
-				overallScore = *localAudit.AvgPageScore
+			if localAudit.Summary != nil {
+				overallScore = localAudit.Summary.AverageScore
 			}
 
 			apiAudits[i] = api.AuditViewResponse{

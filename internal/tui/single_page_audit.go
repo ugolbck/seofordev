@@ -298,6 +298,13 @@ func (m *SinglePageAuditModel) isLocalhost(host string) bool {
 func (m *SinglePageAuditModel) startSinglePageAudit() (tea.Model, tea.Cmd) {
 	m.starting = true
 
+	// Initialize the audit adapter with the current config
+	err := InitializeAuditAdapter(m.config)
+	if err != nil {
+		LogError("Failed to initialize audit adapter: %v", err)
+		// Continue with local-only mode
+	}
+
 	// Get the normalized URL
 	normalizedURL := m.normalizeURL(m.urlInput)
 

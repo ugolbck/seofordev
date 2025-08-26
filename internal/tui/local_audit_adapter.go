@@ -274,6 +274,7 @@ func (a *LocalAuditAdapter) DeleteAudit(auditID string) error {
 	return a.processor.DeleteAudit(auditID)
 }
 
+
 // Helper function to convert analysis status from local format to API format
 func convertAnalysisStatus(localStatus string) string {
 	switch localStatus {

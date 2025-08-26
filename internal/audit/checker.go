@@ -17,10 +17,10 @@ type CheckResult struct {
 
 // CheckResults represents all SEO check results
 type CheckResults struct {
-	Indexable           bool                    `json:"indexable"`
-	IndexabilityReason  string                  `json:"indexability_reason,omitempty"`
-	Score              float64                 `json:"score"`
-	Checks             map[string]CheckResult  `json:"checks"`
+	Indexable          bool                   `json:"indexable"`
+	IndexabilityReason string                 `json:"indexability_reason,omitempty"`
+	Score              float64                `json:"score"`
+	Checks             map[string]CheckResult `json:"checks"`
 }
 
 // Checker performs comprehensive SEO checks on analyzed page data
@@ -38,30 +38,30 @@ func NewChecker(analysis *AnalysisResult, statusCode int) *Checker {
 		statusCode: statusCode,
 		results:    make(map[string]CheckResult),
 		weights: map[string]int{
-			"response_status_code":     100,
-			"title_presence":           90,
-			"title_length":             80,
-			"unique_title_tag":         85,
+			"response_status_code":      100,
+			"title_presence":            90,
+			"title_length":              80,
+			"unique_title_tag":          85,
 			"meta_description_presence": 75,
-			"meta_description_length":  70,
-			"unique_meta_description":  65,
-			"h1_presence":              85,
-			"unique_h1_heading":        80,
-			"h1_length":                75,
-			"h2_presence":              60,
-			"content_length":           70,
-			"canonical_url_presence":   60,
-			"url_matches_canonical":    65,
-			"unique_canonical_link":    55,
-			"meta_robots_indexing":     50,
-			"outlinks_count":           40,
-			"external_links_count":     35,
-			"missing_alt_attribute":    45,
-			"meta_refresh_redirect":    30,
-			"viewport_meta":            25,
-			"charset_declared":         20,
-			"images_optimization":      40,
-			"structured_data":          30,
+			"meta_description_length":   70,
+			"unique_meta_description":   65,
+			"h1_presence":               85,
+			"unique_h1_heading":         80,
+			"h1_length":                 75,
+			"h2_presence":               60,
+			"content_length":            70,
+			"canonical_url_presence":    60,
+			"url_matches_canonical":     65,
+			"unique_canonical_link":     55,
+			"meta_robots_indexing":      50,
+			"outlinks_count":            40,
+			"external_links_count":      35,
+			"missing_alt_attribute":     45,
+			"meta_refresh_redirect":     30,
+			"viewport_meta":             25,
+			"charset_declared":          20,
+			"images_optimization":       40,
+			"structured_data":           30,
 		},
 	}
 }
@@ -73,8 +73,8 @@ func (c *Checker) RunAllChecks() *CheckResults {
 		return &CheckResults{
 			Indexable:          false,
 			IndexabilityReason: c.getIndexabilityReason(),
-			Score:             0,
-			Checks:            make(map[string]CheckResult),
+			Score:              0,
+			Checks:             make(map[string]CheckResult),
 		}
 	}
 
@@ -110,8 +110,8 @@ func (c *Checker) RunAllChecks() *CheckResults {
 	return &CheckResults{
 		Indexable:          true,
 		IndexabilityReason: "",
-		Score:             score,
-		Checks:            c.results,
+		Score:              score,
+		Checks:             c.results,
 	}
 }
 
@@ -279,7 +279,7 @@ func (c *Checker) checkH1Presence() {
 func (c *Checker) checkUniqueH1Heading() {
 	h1Count := c.analysis.Headings.H1Count
 	passed := h1Count == 1
-	message := fmt.Sprintf("Page has exactly 1 H1 heading")
+	message := "Page has exactly 1 H1 heading"
 	if !passed {
 		if h1Count == 0 {
 			message = "Page has no H1 heading"
@@ -387,10 +387,10 @@ func (c *Checker) checkURLMatchesCanonical() {
 	// Parse URLs for comparison
 	pageURL, err1 := url.Parse(c.analysis.URL)
 	canonicalURL, err2 := url.Parse(canonical)
-	
+
 	passed := false
 	message := "Canonical URL does not match page URL"
-	
+
 	if err1 == nil && err2 == nil {
 		// Compare normalized URLs (ignore trailing slashes, fragments)
 		pageNorm := strings.TrimSuffix(pageURL.String(), "/")
@@ -544,10 +544,10 @@ func (c *Checker) checkCharsetDeclared() {
 func (c *Checker) checkImagesOptimization() {
 	totalImages := c.analysis.Images.TotalCount
 	withAlt := c.analysis.Images.WithAltCount
-	
+
 	passed := true
 	message := "Images appear to be optimized"
-	
+
 	if totalImages > 0 {
 		altRatio := float64(withAlt) / float64(totalImages)
 		passed = altRatio >= 0.8 // 80% of images should have alt text

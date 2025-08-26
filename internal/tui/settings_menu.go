@@ -158,12 +158,24 @@ func (m *SettingsMenuModel) View() string {
 	// Help section
 	var help string
 	if m.editing >= 0 {
-		help = m.renderCompactHelp(map[string]string{
+		helpMap := map[string]string{
 			"Enter":            "Save & apply",
 			"Esc":              "Cancel edit",
 			"Ctrl+U":           "Clear field",
 			getPasteShortcut(): "Paste",
-		})
+		}
+
+		// Add special help for boolean fields
+		if m.inputs[m.editing].Key == "save_to_cloud" {
+			helpMap = map[string]string{
+				"Space": "Toggle true/false",
+				"t/f":   "Set true/false",
+				"Enter": "Save & apply",
+				"Esc":   "Cancel edit",
+			}
+		}
+
+		help = m.renderCompactHelp(helpMap)
 	} else {
 		help = m.renderCompactHelp(map[string]string{
 			"↑↓":    "Navigate",
@@ -247,6 +259,8 @@ func (m *SettingsMenuModel) renderSettingInput(index int, input SettingInput) st
 	// Show placeholder hints for some fields
 	var hint string
 	switch input.Key {
+	case "save_to_cloud":
+		hint = " (requires valid API key)"
 	case "default_max_pages", "default_max_depth":
 		hint = " (0 = unlimited)"
 	case "default_port":
@@ -373,9 +387,30 @@ func (m *SettingsMenuModel) handleEditingInput(msg tea.KeyMsg) (tea.Model, tea.C
 		// We'll handle the paste content in the default case
 		return m, nil
 
+	case " ":
+		// Handle space bar for boolean toggles
+		if m.inputs[m.editing].Key == "save_to_cloud" {
+			currentValue := m.inputs[m.editing].Value
+			if currentValue == "true" {
+				m.inputs[m.editing].Value = "false"
+			} else {
+				m.inputs[m.editing].Value = "true"
+			}
+		}
+		return m, nil
 	default:
 		// Handle character input and paste operations
 		if len(msg.String()) == 1 {
+			// For boolean fields, only accept 't', 'f' for true/false
+			if m.inputs[m.editing].Key == "save_to_cloud" {
+				switch msg.String() {
+				case "t", "T":
+					m.inputs[m.editing].Value = "true"
+				case "f", "F":
+					m.inputs[m.editing].Value = "false"
+				}
+				return m, nil
+			}
 			// Single character - accept if it's printable
 			if msg.String() >= " " && msg.String() <= "~" {
 				m.inputs[m.editing].Value += msg.String()

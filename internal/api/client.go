@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"time"
 )
 
@@ -117,6 +116,8 @@ type CompleteAuditResponse struct {
 	Summary AuditSummary `json:"summary"`
 }
 
+
+
 // SEOCheckResponse represents an individual SEO check result
 type SEOCheckResponse struct {
 	CheckName string      `json:"check_name"`
@@ -172,84 +173,33 @@ type AuditListResponse struct {
 
 // API Methods
 
-// StartAudit initiates a new audit session
+// StartAudit initiates a new audit session (DEPRECATED - should not be called)
 func (c *Client) StartAudit(req StartAuditRequest) (*StartAuditResponse, error) {
-	url := fmt.Sprintf("%s/api/audit/start/", c.BaseURL)
-
-	var resp StartAuditResponse
-	if err := c.makeRequest("POST", url, req, &resp); err != nil {
-		return nil, fmt.Errorf("failed to start audit: %w", err)
-	}
-
-	return &resp, nil
+	fmt.Printf("🚨 DEPRECATED: StartAudit method called from:\n")
+	// Print stack trace to see where this is coming from
+	panic("DEPRECATED StartAudit method called - check stack trace")
 }
 
-// SubmitPages sends discovered pages for analysis
+// SubmitPages sends discovered pages for analysis (DEPRECATED - should not be called)
 func (c *Client) SubmitPages(auditID string, req SubmitPagesRequest) (*SubmitPagesResponse, error) {
-	url := fmt.Sprintf("%s/api/audit/%s/pages/", c.BaseURL, auditID)
-
-	var resp SubmitPagesResponse
-	if err := c.makeRequest("POST", url, req, &resp); err != nil {
-		return nil, fmt.Errorf("failed to submit pages: %w", err)
-	}
-
-	return &resp, nil
+	return nil, fmt.Errorf("DEPRECATED: SubmitPages method called - this should not happen with hybrid adapter")
 }
 
-// GetAuditStatus retrieves current audit progress and results
+// GetAuditStatus retrieves current audit progress and results (DEPRECATED - should not be called)
 func (c *Client) GetAuditStatus(auditID string) (*AuditStatusResponse, error) {
-	url := fmt.Sprintf("%s/api/audit/%s/status/", c.BaseURL, auditID)
-
-	var resp AuditStatusResponse
-	if err := c.makeRequest("GET", url, nil, &resp); err != nil {
-		return nil, fmt.Errorf("failed to get audit status: %w", err)
-	}
-
-	return &resp, nil
+	return nil, fmt.Errorf("DEPRECATED: GetAuditStatus method called - this should not happen with hybrid adapter")
 }
 
-// CompleteAudit finalizes the audit session
+// CompleteAudit finalizes the audit session (DEPRECATED - should not be called)
 func (c *Client) CompleteAudit(auditID string) (*CompleteAuditResponse, error) {
-	url := fmt.Sprintf("%s/api/audit/%s/complete/", c.BaseURL, auditID)
-
-	var resp CompleteAuditResponse
-	if err := c.makeRequest("POST", url, nil, &resp); err != nil {
-		return nil, fmt.Errorf("failed to complete audit: %w", err)
-	}
-
-	return &resp, nil
+	return nil, fmt.Errorf("DEPRECATED: CompleteAudit method called - this should not happen with hybrid adapter")
 }
 
-// GetPageDetails retrieves detailed analysis for a specific page
+// GetPageDetails retrieves detailed analysis for a specific page (DEPRECATED - should not be called)
 func (c *Client) GetPageDetails(auditID, pageURL string) (*PageDetailsResponse, error) {
-	// Use query parameter instead of path parameter to avoid URL encoding issues
-	baseURL := fmt.Sprintf("%s/api/audit/%s/page/", c.BaseURL, auditID)
-
-	// Properly encode the page URL as a query parameter
-	params := url.Values{}
-	params.Add("url", pageURL)
-
-	fullURL := baseURL + "?" + params.Encode()
-
-	var resp PageDetailsResponse
-	if err := c.makeRequest("GET", fullURL, nil, &resp); err != nil {
-		return nil, fmt.Errorf("failed to get page details: %w", err)
-	}
-
-	return &resp, nil
+	return nil, fmt.Errorf("DEPRECATED: GetPageDetails method called - this should not happen with hybrid adapter")
 }
 
-// GetAuditHistory fetches the list of user's audits
-func (c *Client) GetAuditHistory() (*AuditListResponse, error) {
-	url := fmt.Sprintf("%s/api/audit/history/", c.BaseURL)
-
-	var resp AuditListResponse
-	if err := c.makeRequest("GET", url, nil, &resp); err != nil {
-		return nil, fmt.Errorf("failed to get audit history: %w", err)
-	}
-
-	return &resp, nil
-}
 
 // Keyword Generation API Structures and Methods
 
@@ -420,8 +370,11 @@ func (c *Client) GetBriefHistory() (*BriefHistoryResponse, error) {
 	return &resp, nil
 }
 
+
+
 // makeRequest is a helper method for making HTTP requests
 func (c *Client) makeRequest(method, url string, reqBody interface{}, respBody interface{}) error {
+	
 	var body io.Reader
 
 	if reqBody != nil {

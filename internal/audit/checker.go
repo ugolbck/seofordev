@@ -38,30 +38,32 @@ func NewChecker(analysis *AnalysisResult, statusCode int) *Checker {
 		statusCode: statusCode,
 		results:    make(map[string]CheckResult),
 		weights: map[string]int{
-			"response_status_code":      100,
-			"title_presence":            90,
-			"title_length":              80,
-			"unique_title_tag":          85,
-			"meta_description_presence": 75,
-			"meta_description_length":   70,
-			"unique_meta_description":   65,
-			"h1_presence":               85,
-			"unique_h1_heading":         80,
-			"h1_length":                 75,
-			"h2_presence":               60,
-			"content_length":            70,
-			"canonical_url_presence":    60,
-			"url_matches_canonical":     65,
-			"unique_canonical_link":     55,
-			"meta_robots_indexing":      50,
-			"outlinks_count":            40,
-			"external_links_count":      35,
-			"missing_alt_attribute":     45,
-			"meta_refresh_redirect":     30,
-			"viewport_meta":             25,
-			"charset_declared":          20,
-			"images_optimization":       40,
-			"structured_data":           30,
+			"response_status_code":      95,
+			"title_presence":            85,
+			"title_length":              75,
+			"unique_title_tag":          70,
+			"meta_description_presence": 80,
+			"meta_description_length":   65,
+			"unique_meta_description":   60,
+			"h1_presence":               90,
+			"unique_h1_heading":         85,
+			"h1_length":                 70,
+			"h2_presence":               50,
+			"content_length":            75,
+			"canonical_url_presence":    55,
+			"url_matches_canonical":     50,
+			"unique_canonical_link":     45,
+			"meta_robots_indexing":      65,
+			"outlinks_count":            35,
+			"external_links_count":      30,
+			"missing_alt_attribute":     55,
+			"meta_refresh_redirect":     25,
+			"viewport_meta":             40,
+			"charset_declared":          35,
+			"images_optimization":       45,
+			"structured_data":           35,
+			"page_loading_speed":        60,
+			"social_media_meta":         25,
 		},
 	}
 }
@@ -103,6 +105,8 @@ func (c *Checker) RunAllChecks() *CheckResults {
 	c.checkCharsetDeclared()
 	c.checkImagesOptimization()
 	c.checkStructuredData()
+	c.checkPageLoadingSpeed()
+	c.checkSocialMediaMeta()
 
 	// Calculate overall score
 	score := c.calculateScore()
@@ -176,13 +180,13 @@ func (c *Checker) checkTitlePresence() {
 
 func (c *Checker) checkTitleLength() {
 	titleLength := c.analysis.Content.TitleLength
-	passed := titleLength >= 30 && titleLength <= 70
-	message := fmt.Sprintf("Title length is %d characters (optimal: 30-70)", titleLength)
+	passed := titleLength >= 25 && titleLength <= 65
+	message := fmt.Sprintf("Title length is %d characters (optimal: 25-65)", titleLength)
 	if !passed {
-		if titleLength < 30 {
-			message = fmt.Sprintf("Title is too short (%d chars). Consider 30-70 characters", titleLength)
+		if titleLength < 25 {
+			message = fmt.Sprintf("Title is too short (%d chars). Consider 25-65 characters", titleLength)
 		} else {
-			message = fmt.Sprintf("Title is too long (%d chars). Consider 30-70 characters", titleLength)
+			message = fmt.Sprintf("Title is too long (%d chars). Consider 25-65 characters", titleLength)
 		}
 	}
 
@@ -225,13 +229,13 @@ func (c *Checker) checkMetaDescriptionPresence() {
 
 func (c *Checker) checkMetaDescriptionLength() {
 	descLength := c.analysis.Content.DescriptionLength
-	passed := descLength >= 120 && descLength <= 160
-	message := fmt.Sprintf("Meta description length is %d characters (optimal: 120-160)", descLength)
+	passed := descLength >= 110 && descLength <= 155
+	message := fmt.Sprintf("Meta description length is %d characters (optimal: 110-155)", descLength)
 	if !passed {
-		if descLength < 120 {
-			message = fmt.Sprintf("Meta description is too short (%d chars). Consider 120-160 characters", descLength)
-		} else if descLength > 160 {
-			message = fmt.Sprintf("Meta description is too long (%d chars). Consider 120-160 characters", descLength)
+		if descLength < 110 {
+			message = fmt.Sprintf("Meta description is too short (%d chars). Consider 110-155 characters", descLength)
+		} else if descLength > 155 {
+			message = fmt.Sprintf("Meta description is too long (%d chars). Consider 110-155 characters", descLength)
 		}
 	}
 
@@ -308,13 +312,13 @@ func (c *Checker) checkH1Length() {
 	}
 
 	h1Length := len(c.analysis.H1[0])
-	passed := h1Length >= 20 && h1Length <= 70
-	message := fmt.Sprintf("H1 length is %d characters (optimal: 20-70)", h1Length)
+	passed := h1Length >= 15 && h1Length <= 65
+	message := fmt.Sprintf("H1 length is %d characters (optimal: 15-65)", h1Length)
 	if !passed {
-		if h1Length < 20 {
-			message = fmt.Sprintf("H1 is too short (%d chars). Consider 20-70 characters", h1Length)
+		if h1Length < 15 {
+			message = fmt.Sprintf("H1 is too short (%d chars). Consider 15-65 characters", h1Length)
 		} else {
-			message = fmt.Sprintf("H1 is too long (%d chars). Consider 20-70 characters", h1Length)
+			message = fmt.Sprintf("H1 is too long (%d chars). Consider 15-65 characters", h1Length)
 		}
 	}
 
@@ -343,10 +347,10 @@ func (c *Checker) checkH2Presence() {
 
 func (c *Checker) checkContentLength() {
 	wordCount := c.analysis.Content.WordCount
-	passed := wordCount >= 300
+	passed := wordCount >= 250
 	message := fmt.Sprintf("Page has %d words of content", wordCount)
 	if !passed {
-		message = fmt.Sprintf("Page has only %d words (consider 300+ for better SEO)", wordCount)
+		message = fmt.Sprintf("Page has only %d words (consider 250+ for better SEO)", wordCount)
 	}
 
 	c.results["content_length"] = CheckResult{
@@ -459,7 +463,7 @@ func (c *Checker) checkOutlinksCount() {
 
 func (c *Checker) checkExternalLinksCount() {
 	externalCount := c.analysis.Links.ExternalCount
-	passed := externalCount <= 10
+	passed := externalCount <= 15
 	message := fmt.Sprintf("Page has %d external links", externalCount)
 	if !passed {
 		message = fmt.Sprintf("Page has %d external links (consider reducing)", externalCount)
@@ -578,6 +582,68 @@ func (c *Checker) checkStructuredData() {
 		Value:   hasStructuredData,
 		Message: message,
 		Weight:  c.weights["structured_data"],
+	}
+}
+
+func (c *Checker) checkPageLoadingSpeed() {
+	// Simple heuristic based on content size and images
+	wordCount := c.analysis.Content.WordCount
+	imageCount := c.analysis.Images.TotalCount
+	
+	// Estimate load speed based on content complexity
+	loadScore := 100.0
+	if wordCount > 2000 {
+		loadScore -= 20 // Heavy text content
+	}
+	if imageCount > 10 {
+		loadScore -= 25 // Many images slow loading
+	}
+	if wordCount < 100 {
+		loadScore -= 15 // Very light content might lack substance
+	}
+	
+	passed := loadScore >= 70
+	message := fmt.Sprintf("Page loading characteristics score: %.0f/100", loadScore)
+	if !passed {
+		message = fmt.Sprintf("Page may load slowly (score: %.0f/100)", loadScore)
+	}
+
+	c.results["page_loading_speed"] = CheckResult{
+		Passed:  passed,
+		Value:   loadScore,
+		Message: message,
+		Weight:  c.weights["page_loading_speed"],
+	}
+}
+
+func (c *Checker) checkSocialMediaMeta() {
+	// Check for Open Graph or Twitter Card meta tags in the Meta map
+	hasOG := false
+	hasTwitter := false
+	
+	if c.analysis.Meta != nil {
+		for key := range c.analysis.Meta {
+			keyLower := strings.ToLower(key)
+			if strings.Contains(keyLower, "og:") {
+				hasOG = true
+			}
+			if strings.Contains(keyLower, "twitter:") {
+				hasTwitter = true
+			}
+		}
+	}
+	
+	passed := hasOG || hasTwitter
+	message := "Page has social media meta tags (Open Graph or Twitter Cards)"
+	if !passed {
+		message = "Page is missing social media meta tags (consider adding Open Graph or Twitter Cards)"
+	}
+
+	c.results["social_media_meta"] = CheckResult{
+		Passed:  passed,
+		Value:   hasOG || hasTwitter,
+		Message: message,
+		Weight:  c.weights["social_media_meta"],
 	}
 }
 

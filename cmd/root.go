@@ -60,7 +60,7 @@ Use the available commands below to get started, or run 'seo <command> --help' f
 (___/|_____)\___/ |_|  \___/|_(_) \____|_____) \_/  
                                                     
 `)
-		fmt.Printf("🚀 SEO Tools CLI v%s\n\n", version.GetVersion())
+		fmt.Printf("🚀 SEO Tools CLI %s\n\n", version.GetVersion())
 
 		fmt.Printf("Available commands:\n")
 		fmt.Printf("  seo audit run            # Run localhost SEO audit (free)\n")

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SEOForDev is a Go-based CLI tool for SEO analysis and optimization, featuring:
+seofor.dev is a Go-based CLI tool for SEO analysis and optimization, featuring:
 - Interactive TUI (Terminal User Interface) built with Bubble Tea
 - Website crawling and SEO auditing capabilities using Playwright
 - API integration with seofor.dev backend for analysis

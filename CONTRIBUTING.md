@@ -1,6 +1,6 @@
-# Contributing to SEOForDev
+# Contributing to seofor.dev
 
-Thank you for your interest in contributing to SEOForDev! This guide will help you get started with contributing to our open source SEO tool.
+Thank you for your interest in contributing to seofor.dev! This guide will help you get started with contributing to our open source SEO tool.
 
 ## 🚀 Quick Start for Contributors
 
@@ -159,8 +159,8 @@ Please avoid contributions that:
 
 ## 📄 License
 
-By contributing to SEOForDev, you agree that your contributions will be licensed under the same MIT License that covers the project. See [LICENSE](LICENSE) for details.
+By contributing to seofor.dev, you agree that your contributions will be licensed under the same MIT License that covers the project. See [LICENSE](LICENSE) for details.
 
 ---
 
-Thank you for contributing to SEOForDev! 🚀
+Thank you for contributing to seofor.dev! 🚀

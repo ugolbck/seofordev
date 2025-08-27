@@ -271,6 +271,7 @@ func (c *Client) GetKeywordHistory() (*KeywordHistoryResponse, error) {
 	return &resp, nil
 }
 
+
 // CreditBalanceResponse represents the user's credit balance
 type CreditBalanceResponse struct {
 	Credits int `json:"credits"`

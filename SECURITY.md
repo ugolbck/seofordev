@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We actively support the following versions of SEOForDev:
+We actively support the following versions of seofor.dev:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -150,4 +150,4 @@ For security-related questions or concerns:
 
 ---
 
-**Security is a shared responsibility. Thank you for helping keep SEOForDev secure! 🔒**
+**Security is a shared responsibility. Thank you for helping keep seofor.dev secure! 🔒**

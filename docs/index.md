@@ -23,7 +23,7 @@ seofor.dev synergizes with AI code editors such as Claude Code or Cursor: after 
 
 Before you begin, make sure you have:
 
-- **SEOForDev installed** - Follow the [installation guide](installation/index.md)
+- **seofor.dev installed** - Follow the [installation guide](installation/index.md)
 - **A local development server** - Your website running on localhost
 - **Basic terminal knowledge** - Comfort with command-line tools
 

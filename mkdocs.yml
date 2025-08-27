@@ -1,6 +1,6 @@
 site_name: seofor.dev Documentation
 site_url: https://docs.seofor.dev
-site_description: Complete documentation for the SEOForDev CLI tool
+site_description: Complete documentation for the seofor.dev CLI tool
 site_author: ugolbck
 repo_url: https://github.com/ugolbck/seofordev
 repo_name: ugolbck/seofordev
@@ -72,4 +72,4 @@ extra:
     - icon: fontawesome/solid/globe
       link: https://seofor.dev
 
-copyright: Copyright &copy; 2025 SEOForDev
+copyright: Copyright &copy; 2025 seofor.dev

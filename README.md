@@ -1,144 +1,237 @@
-# seofor.dev 🚀
+<div align="center">
+
+```
+                    ___               _             
+                   / __)             | |            
+  ___ _____  ___ _| |__ ___   ____ __| |_____ _   _ 
+ /___) ___ |/ _ (_   __) _ \ / ___) _  | ___ | | | |
+|___ | ____| |_| || | | |_| | |_ ( (_| | ____|\ V / 
+(___/|_____)\___/ |_|  \___/|_(_) \____|_____) \_/  
+                                                    
+```
+
+# The Developer's SEO Toolkit ✨
+
+**Lightning-fast CLI for SEO audits, keyword research, and content optimization**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ugolbck/seofordev)](https://goreportcard.com/report/github.com/ugolbck/seofordev)
 [![GitHub release](https://img.shields.io/github/release/ugolbck/seofordev.svg)](https://github.com/ugolbck/seofordev/releases/latest)
+[![GitHub stars](https://img.shields.io/github/stars/ugolbck/seofordev?style=social)](https://github.com/ugolbck/seofordev/stargazers)
 
-A powerful CLI-first SEO tool that helps developers audit their websites and optimize for search engines from day one. Built with Go and featuring an interactive terminal interface.
+**Stop losing traffic to SEO mistakes. Audit, optimize, and dominate search results from your terminal.**
 
-## ✨ Features
+[✨ Get Started](#-quick-start) • [🔥 Features](#-features) • [📖 Docs](https://docs.seofor.dev) • [💎 Premium](https://seofor.dev/payments/pricing)
 
-### 🔓 **Free & Open Source**
-- **Website Auditing**: Comprehensive SEO analysis of your localhost
-- **Interactive TUI**: Beautiful terminal user interface built with Bubble Tea
-- **Playwright Integration**: Reliable web crawling with JavaScript support
-- **Export Results**: Generate AI-ready optimization prompts
+</div>
 
-### 💎 **Premium Features** (API Key Required)
-- **Keyword Research**: Generate high-volume, low-competition keywords
-- **Content Brief Generation**: Create SEO-optimized content briefs to create quality content
+---
 
-## 🚀 Installation
+## 🎬 Demo
 
-### Option 1: Install Script (Recommended)
+**🔍 Instant localhost SEO audits**
 ```bash
+$ seo audit run
+🚀 Crawling localhost:3000...
+✅ Found 12 pages, 0 errors
+📊 Generated optimization prompts - ready for AI!
+```
+
+**⚡ Lightning-fast keyword research**
+```bash
+$ seo keyword generate "saas analytics"
+🔍 Generated 50 keywords for 'saas analytics'
+💰 Credits used: 10 | Top keyword: "free saas analytics" (5000/mo, 23% difficulty)
+```
+
+## 🔥 Features
+
+### 🆓 **Free & Always Available**
+- **🔍 Localhost SEO Audits** - Deep-dive analysis of your development sites
+- **🤖 AI-Ready Exports** - Copy/paste prompts for Claude, Cursor, ChatGPT
+- **⚡ Blazing Fast** - Built in Go, powered by Playwright
+- **📊 Smart Crawling** - JavaScript-rendered pages, respect robots.txt
+- **🎯 Zero Config** - Works out of the box, no setup required
+
+### 💎 **Premium Power Features**
+- **🔬 Advanced Keyword Research** - Volume, difficulty, CPC data
+- **📝 AI Content Briefs** - Competition analysis + optimization strategies
+- **📈 Search Intent Analysis** - Know exactly what users want
+- **⏰ Generation History** - Never lose your research again
+
+## ⚡ Quick Start
+
+### 1️⃣ Install (30 seconds)
+```bash
+# macOS/Linux (recommended)
 curl -sSfL https://seofor.dev/install.sh | bash
 ```
 
-### Option 2: Download Binary
-Visit our [releases page](https://github.com/ugolbck/seofordev/releases/latest) and download the appropriate binary for your platform.
-
-### Option 3: Build from Source
+### 2️⃣ Audit Your Site (2 minutes)
 ```bash
-git clone https://github.com/ugolbck/seofordev.git
-cd seofordev
-go build -o seo .
+# Start your dev server (e.g., npm run dev, rails server, etc.)
+$ cd your-project && npm run dev
+
+# In another terminal, audit it
+$ seo audit run --port 3000
+# 🎉 Get instant SEO insights + AI optimization prompts
 ```
 
-## 📋 Requirements
-
-- **Operating System**: macOS, Linux, or Windows (WSL)
-- **Network**: Internet connection for Playwright setup and premium features
-- **Permissions**: May require sudo/admin rights for initial Playwright installation
-
-## 🎯 Quick Start
-
-1. **Launch the application**:
-   ```bash
-   seo
-   ```
-
-2. **First-time setup**: The app will automatically install Playwright dependencies (~150MB, one-time download)
-
-3. **Start auditing**: Navigate to `Localhost Audit > New Audit` and audit your development server
-
-4. **Export results**: Press `e` to copy SEO optimization prompts to your clipboard
-
-5. **Integrate with AI**: Paste the prompts into Claude Code, Cursor, or your preferred AI coding assistant
-
-## 🔑 Premium Features Setup
-
-For keyword research and content brief generation:
-
-1. Sign up at [seofor.dev/dashboard](https://seofor.dev/dashboard/)
-2. Generate an API key
-3. Enter it when prompted in the application
-4. Access premium features from the main menu
-
-## Premium features
-
-These features require a paid plan (monthly subscription, or lifetime one-time purchase). You don't need them to optimize your existing pages (site audit), but **they are great to generate new, relevant content** to improve your app's visibility and rankings online. This is eventually **necessary to drive more organic traffic**, and potential customers to your app.
-
-The sooner you generate interesting, high-value content that people are looking for, the more early traffic you will get.
-
-### Keyword suggestions
-
-A great way to start your SEO journey is to pick a set of keywords that you want to _rank on_. You want to write content that echoes with those keywords.
-
-Optimally, you want to target keywords that a lot of people are looking for (high Volume), but that few websites are already covering (low Difficulty). The Keyword Suggestions tool is here for that.
-
-If you don't know where to start, or if you're looking for easy keywords with high volume, this tool will do that for you.
-
-### Content Brief generation
-
-Once you have targeted a few keywords you want to rank on, you will need to generate content.
-
-An easy way to start is to set up a simple, markdown-based blog on your site, and **create a new article per target keyword**.
-
-The brief generator synergizes with your favorite AI code editors. Since we don't know what web framework you're using, we leave it up to your AI to write and integrate the actual article into your website. **We provide the data and instructions that lead to high ranking on your chosen keyword**, your AI tool does the rest. Don't hesitate to tweak the prompt we give you if you wish a specific tone.
-
-We strongly encourage you to proofread any AI-generated content, as it may make mistakes.
-
-#### How to use
-
-1. Navigate to the `Content Brief Generation` tool.
-2. Enter the target keyword and run the generation (this may take up to a minute, you may leave the app and check your content brief history later).
-3. We analyze your competitors and many other data points, in order to generate a content brief that is tailored for your audience and optimized to compete with Google's top results.
-4. Press `e` on the results page to export the content brief to your clipboard.
-5. Paste the content brief prompt into your favorite AI code editor (Cursor, Claude Code, etc.) and let the magic happen.
-6. Once you've pushed your new content online, we recommend you log in to your Google Search Console, and ask Google to index your new page URL. This should speed up the indexation process.
-
-
-## 🏗️ Development
-
-### Building from Source
+### 3️⃣ Level Up with Keyword Research
 ```bash
-git clone https://github.com/ugolbck/seofordev.git
-cd seofordev
-go mod download
-go build -o seo .
+# Get your API key at https://seofor.dev/dashboard
+$ seo config set-api-key your-api-key-here
+$ seo keyword generate "your product keyword"
+# 📈 Discover high-traffic, low-competition keywords
 ```
 
-### Running Tests
+## 🛠️ Commands Reference
+
+<table>
+<tr>
+<td>
+
+**🆓 Free Features**
 ```bash
+seo audit run               # Audit localhost
+seo audit list              # View audit history  
+seo audit show <id>         # Detailed results
+seo config                  # Show settings
+seo index submit <url>      # IndexNow submission
+```
+
+</td>
+<td>
+
+**💎 Premium Features**
+```bash
+seo keyword generate <term>    # Research keywords
+seo keyword history            # View past research
+seo keyword show <id>          # Detailed results
+seo brief generate <keyword>   # Content brief
+seo brief history              # View past briefs
+seo pro status                 # Account info
+```
+
+</td>
+</tr>
+</table>
+
+## 🎯 Real-World Workflows
+
+### 🔧 **Developer Workflow**: Pre-Launch SEO Check
+```bash
+# Before deploying
+seo audit run --port 3000
+# Fix issues highlighted in AI prompts
+# Deploy with confidence 🚀
+```
+
+### 📝 **Content Creator Workflow**: Research → Write → Optimize  
+```bash
+# 1. Research profitable keywords
+seo keyword generate "AI tools"
+
+# 2. Generate data-driven content brief  
+seo brief generate "best AI tools for developers"
+
+# 3. Export to your AI editor and create content
+seo brief show <id> --copy
+# Paste into Claude/Cursor/ChatGPT ✨
+```
+
+### 📊 **SEO Agency Workflow**: Client Audits
+```bash
+# Quick client site analysis
+seo audit run --port 8080
+seo audit export <id>
+# Professional SEO recommendations ready 📈
+```
+
+## 🏆 Why Choose seofor.dev?
+
+<div align="center">
+
+| 🆚 **vs Manual SEO** | 🆚 **vs Other Tools** | 🆚 **vs Enterprise** |
+|:---:|:---:|:---:|
+| ⚡ **10x Faster** | 🎯 **Developer-First** | 💸 **95% Cheaper** |
+| 🤖 **AI-Integrated** | 🔓 **Open Source** | 🚀 **Zero Setup** |
+| 📊 **Data-Driven** | ⚡ **CLI-Native** | 🛡️ **Privacy-First** |
+
+</div>
+
+## 🏗️ For Contributors
+
+```bash
+# Get started with development
+git clone https://github.com/ugolbck/seofordev.git
+cd seofordev
+go mod tidy
+go build -o seo .
+
+# Run tests
 go test ./...
+
+# See development docs
+open CLAUDE.md
 ```
 
-### Contributing
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+**🤝 Contributing**: We ❤️ contributions! Check out our [contribution guide](CONTRIBUTING.md) and help make SEO better for all developers.
 
-## 📚 Documentation
+## 🎨 Built With
 
-- **API Documentation**: [docs.seofor.dev](https://docs.seofor.dev)
-- **Architecture**: See [CLAUDE.md](CLAUDE.md) for development guidance
-- **Security Policy**: [SECURITY.md](SECURITY.md)
+- **🔹 Go** - Performance & reliability
+- **🔹 Cobra** - Beautiful CLI experience  
+- **🔹 Playwright** - Modern web crawling
 
-## 🆘 Support
+## 🔮 Roadmap
 
-- **Issues**: [GitHub Issues](https://github.com/ugolbck/seofordev/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ugolbck/seofordev/discussions)  
-- **Email**: hey@seofor.dev
-- **Twitter**: [@ugo_builds](https://x.com/ugo_builds)
+- [ ] **CI/CD integration** - GitHub Actions, etc.
+- [ ] **Competitor analysis** - See how you stack up
 
-## 📄 License
+*Vote on features in [GitHub Discussions](https://github.com/ugolbck/seofordev/discussions)*
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📞 Support & Community
 
-**Note**: Premium features require a subscription to seofor.dev and are subject to additional terms of service.
+<div align="center">
+
+**Need Help?**
+
+[📖 Documentation](https://docs.seofor.dev) • [🐛 Issues](https://github.com/ugolbck/seofordev/issues) • [💬 Discussions](https://github.com/ugolbck/seofordev/discussions)
+
+[✉️ hey@seofor.dev](mailto:hey@seofor.dev) • [🐦 @ugo_builds](https://x.com/ugo_builds)
+
+**Show Some Love**
+
+⭐ Star this repo • 🔀 Fork & contribute • 📢 Share with friends
+
+</div>
 
 ---
 
 <div align="center">
-  <p>Made with ❤️ for developers who care about SEO</p>
-  <p><a href="https://seofor.dev">seofor.dev</a> • <a href="https://github.com/ugolbck/seofordev">GitHub</a></p>
+
+## 🎉 Ready to Dominate Search Results?
+
+**Start your SEO journey today - it's free!**
+
+```bash
+curl -sSfL https://seofor.dev/install.sh | bash && seo
+```
+
+<sub>Made with ❤️ for developers who ship fast and rank high</sub>
+
+**[🚀 Get Started](https://seofor.dev) • [💎 Go Premium](https://seofor.dev/payments/pricing) • [⭐ Star on GitHub](https://github.com/ugolbck/seofordev)**
+
 </div>
+
+---
+
+<details>
+<summary>📄 License</summary>
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+*Premium features require a seofor.dev subscription and are subject to additional terms of service.*
+
+</details>

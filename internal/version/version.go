@@ -10,7 +10,7 @@ import (
 var Version = "dev"
 
 // MinimumRequiredVersion is the minimum version required to run the app
-const MinimumRequiredVersion = "2.0.1"
+const MinimumRequiredVersion = "3.0.0"
 
 // GetVersion returns the current version
 func GetVersion() string {

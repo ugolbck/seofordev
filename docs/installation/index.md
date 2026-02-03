@@ -1,6 +1,6 @@
 # Installation Overview
 
-seofor.dev is available on any Unix machine with architectures arm64 or amd64. So whether you're on MacOS, Linux, or Winsows (WSL), you're all good. We do not support native Windows installation.
+seofor.dev is available on any Unix machine with architectures arm64 or amd64. So whether you're on MacOS, Linux, or Windows (WSL), you're all good. We do not support native Windows installation.
 
 ## Install script
 
@@ -16,7 +16,7 @@ The script will:
 - install the binary (you may be prompted for your root user password)
 - create the persistent config file at _~/.seo/config.yml_
 
-Once this is done, you're all set, congratulations! 🎉
+Once this is done, you're all set, congratulations!
 
 ## Running the CLI
 
@@ -28,12 +28,22 @@ seo --version
 
 and you should see something like that:
 
-_seo version v0.1.11_
+_seo version v3.0.0_
 
-All good 👌 Now run the TUI (Text-based User Interface) by running
+All good. Now run the CLI by running
 
 ```bash
 seo
+```
+
+## Available Commands
+
+```bash
+seo audit run              # Run localhost SEO audit
+seo audit list             # List audit history
+seo config                 # Show CLI configuration
+seo index submit           # Submit URLs to search engines via IndexNow
+seo --help                 # Show all commands
 ```
 
 ## Need Help?

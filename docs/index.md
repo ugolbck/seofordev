@@ -4,17 +4,17 @@ seofor.dev is a powerful CLI-first SEO tool designed to help indiehackers audit 
 
 ## What is seofor.dev?
 
-seofor.dev is a command-line interface tool that provides comprehensive SEO analysis and recommendations for web applications. Whether you're building a new project or optimizing an existing one, seofor.dev helps you identify and fix SEO issues before they impact your search rankings. It also helps you identify relevant keywords you should leverage in your application, and automates content creation based on these keywords.
+seofor.dev is a command-line interface tool that provides comprehensive SEO analysis and recommendations for web applications. Whether you're building a new project or optimizing an existing one, seofor.dev helps you identify and fix SEO issues before they impact your search rankings.
 
 It is a framework-agnostic tool, that means that it works with **any** web framework (NextJS, Vue, Svelte, Django, Laravel, etc).
 
-seofor.dev synergizes with AI code editors such as Claude Code or Cursor: after auditing your localhost server, pressing "__e__" copies a AI-ready prompt that contains all the necessary information to optimize your app for search engines. Dump the prompt in your favorite AI helper, and let it do its job. The same goes for content briefs _(coming soon)_: seofor.dev analyzes your app and competitors for a given keyword you want to rank on, and copies an AI-ready prompt to your clipboard with "__e__". Dump it into your AI helper, which will write ranking content for you.
+seofor.dev synergizes with AI code editors such as Claude Code or Cursor: after auditing your localhost server, pressing "__e__" copies an AI-ready prompt that contains all the necessary information to optimize your app for search engines. Dump the prompt in your favorite AI helper, and let it do its job.
 
 ## Key Features
 
 - **Localhost SEO Auditing**: Analyze your development environment for SEO best practices
-- **Keyword Suggestions**: Get intelligent keyword recommendations based on a seed keyword
-- **Content brief for AI**: Generate an AI-ready prompt containing a content brief for a seed keyword
+- **AI-Ready Export**: Export audit results as prompts for AI code editors
+- **IndexNow Integration**: Notify search engines about your latest changes
 - **Cross-Platform Support**: Works on Windows (WSL), macOS, and Linux
 
 ## Quick Start
@@ -29,9 +29,9 @@ Before you begin, make sure you have:
 
 Then:
 
-2. **Run the CLI, run your local dev server** and audit your app  
-3. **Review the results** and implement recommendations
-4. **Monitor improvements** over time
+1. **Run the CLI, run your local dev server** and audit your app
+2. **Review the results** and implement recommendations
+3. **Monitor improvements** over time
 
 ## Getting Started
 

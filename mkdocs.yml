@@ -1,6 +1,6 @@
-site_name: seofor.dev Documentation
-site_url: https://docs.seofor.dev
-site_description: Complete documentation for the seofor.dev CLI tool
+site_name: seofor.dev
+site_url: https://seofor.dev
+site_description: Open-source CLI for localhost SEO audits
 site_author: ugolbck
 repo_url: https://github.com/ugolbck/seofordev
 repo_name: ugolbck/seofordev
@@ -63,8 +63,9 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Installation:
-    - Overview: installation/index.md
+  - Docs:
+    - Overview: docs/index.md
+    - Installation: docs/installation/index.md
 
 extra_css:
   - stylesheets/ads.css

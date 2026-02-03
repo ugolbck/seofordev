@@ -51,7 +51,7 @@ Generated optimization prompts - ready for AI!
 ### 1. Install
 ```bash
 # macOS/Linux
-curl -sSfL https://seofor.dev/install.sh | bash
+curl -sSfL https://raw.githubusercontent.com/ugolbck/seofordev/main/install.sh | bash
 ```
 
 ### 2. Audit Your Site
@@ -152,7 +152,7 @@ Star this repo • Fork & contribute • Share with friends
 **Start your SEO journey today - it's free and open source!**
 
 ```bash
-curl -sSfL https://seofor.dev/install.sh | bash && seo
+curl -sSfL https://raw.githubusercontent.com/ugolbck/seofordev/main/install.sh | bash && seo
 ```
 
 <sub>Made with love for developers who ship fast and rank high</sub>

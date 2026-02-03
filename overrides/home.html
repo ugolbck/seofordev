@@ -1,0 +1,265 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+{{ super() }}
+
+<style>
+  :root {
+    --mono: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", "Droid Sans Mono", monospace;
+  }
+
+  .md-main__inner {
+    margin-top: 0;
+  }
+  .md-content__inner {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .landing {
+    font-family: var(--mono);
+    background: white;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  [data-md-color-scheme="slate"] .landing {
+    background: #0d1117;
+    color: #e6edf3;
+  }
+
+  .landing-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .landing h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .landing .tagline {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .landing pre {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    overflow-x: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  [data-md-color-scheme="slate"] .landing pre {
+    background: #161b22;
+    border-color: #30363d;
+  }
+
+  .landing code {
+    font-family: var(--mono);
+  }
+
+  .landing-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.7rem;
+  }
+
+  .landing-links a {
+    color: #0969da;
+    text-decoration: none;
+  }
+
+  .landing-links a:hover {
+    text-decoration: underline;
+  }
+
+  [data-md-color-scheme="slate"] .landing-links a {
+    color: #58a6ff;
+  }
+
+  .landing-ad {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .landing hr {
+    border: none;
+    border-top: 1px solid #d0d7de;
+    margin: 1.5rem 0;
+  }
+
+  [data-md-color-scheme="slate"] .landing hr {
+    border-color: #30363d;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section h2 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.5;
+  }
+
+  .section p {
+    font-size: 0.7rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin-bottom: 0.75rem;
+  }
+
+  .section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.7rem;
+  }
+
+  .section li {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #d0d7de;
+  }
+
+  [data-md-color-scheme="slate"] .section li {
+    border-color: #30363d;
+  }
+
+  .section li:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-weight: 600;
+  }
+
+  .desc {
+    opacity: 0.7;
+  }
+
+  .commands {
+    font-size: 0.65rem;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 0.75rem;
+  }
+
+  [data-md-color-scheme="slate"] .commands {
+    background: #161b22;
+    border-color: #30363d;
+  }
+
+  .commands code {
+    display: block;
+    padding: 0.2rem 0;
+    opacity: 0.9;
+  }
+
+  .commands .comment {
+    opacity: 0.5;
+  }
+
+  /* Hide ad on small screens */
+  @media (max-width: 768px) {
+    .landing-ad {
+      display: none;
+    }
+  }
+</style>
+
+<div class="landing">
+  <div class="landing-inner">
+    <h1>seofor.dev</h1>
+    <p class="tagline">Open-source CLI for localhost SEO audits</p>
+
+    <pre><code>curl -sSfL https://raw.githubusercontent.com/ugolbck/seofordev/main/install.sh | bash</code></pre>
+
+    <div class="landing-links">
+      <a href="docs/">Documentation</a>
+      <a href="https://github.com/ugolbck/seofordev">GitHub</a>
+      <a href="https://github.com/ugolbck/seofordev/releases">Releases</a>
+    </div>
+
+    <div class="landing-ad">
+      <div class="ad-light">
+        <script src="https://adventory.to/ad.js" data-placement="73c87d56-1311-4db8-859d-c788c3b66248"></script>
+      </div>
+      <div class="ad-dark">
+        <script src="https://adventory.to/ad.js" data-placement="73c87d56-1311-4db8-859d-c788c3b66248" data-theme="dark"></script>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+      <h2>About</h2>
+      <p>
+        seofor.dev is a command-line tool that audits your localhost development server for SEO issues.
+        It crawls your site, analyzes each page, and generates AI-ready prompts you can paste into
+        Claude, Cursor, or ChatGPT to fix problems automatically.
+      </p>
+      <p>
+        Built for developers who want to ship SEO-optimized sites without leaving the terminal.
+        Works with any framework — Next.js, Django, Rails, Laravel, Astro, and more.
+      </p>
+    </div>
+
+    <hr>
+
+    <div class="section">
+      <h2>Features</h2>
+      <ul>
+        <li><span class="label">Localhost audits</span> <span class="desc">— Crawl and analyze your dev server</span></li>
+        <li><span class="label">AI-ready export</span> <span class="desc">— Copy prompts for Claude, Cursor, ChatGPT</span></li>
+        <li><span class="label">IndexNow</span> <span class="desc">— Notify search engines when you publish</span></li>
+        <li><span class="label">SEO checks</span> <span class="desc">— Title, meta, headings, images, links, more</span></li>
+        <li><span class="label">Framework agnostic</span> <span class="desc">— Works with any stack</span></li>
+        <li><span class="label">Fast</span> <span class="desc">— Built in Go, uses Playwright for JS rendering</span></li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="section">
+      <h2>Quick Start</h2>
+      <div class="commands">
+        <code><span class="comment"># Install</span></code>
+        <code>curl -sSfL https://raw.githubusercontent.com/ugolbck/seofordev/main/install.sh | bash</code>
+        <code></code>
+        <code><span class="comment"># Run your dev server, then audit it</span></code>
+        <code>seo audit run --port 3000</code>
+        <code></code>
+        <code><span class="comment"># List past audits</span></code>
+        <code>seo audit list</code>
+        <code></code>
+        <code><span class="comment"># Submit URLs to search engines</span></code>
+        <code>seo index submit https://example.com/new-page</code>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+      <h2>License</h2>
+      <p>MIT — free and open source.</p>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}{% endblock %}

@@ -7,7 +7,7 @@ seofor.dev is available on any Unix machine with architectures arm64 or amd64. S
 seofor.dev CLI can be installed with the following command:
 
 ```bash
-curl -sSfL https://seofor.dev/install.sh | bash
+curl -sSfL https://raw.githubusercontent.com/ugolbck/seofordev/main/install.sh | bash
 ```
 
 The script will:

@@ -1,0 +1,10 @@
+/* Hide ad in left navigation, only show in right sidebar */
+.md-sidebar--primary .adventory-ad-container {
+  display: none;
+}
+
+/* Light/dark theme switching */
+[data-md-color-scheme="default"] .ad-dark { display: none; }
+[data-md-color-scheme="default"] .ad-light { display: block; }
+[data-md-color-scheme="slate"] .ad-light { display: none; }
+[data-md-color-scheme="slate"] .ad-dark { display: block; }

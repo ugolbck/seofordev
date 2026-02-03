@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/ugolbck/seofordev/internal/api"
 	"github.com/ugolbck/seofordev/internal/audit"
 	"github.com/ugolbck/seofordev/internal/crawler"
 	"github.com/ugolbck/seofordev/internal/export"
@@ -119,7 +118,7 @@ func (s *AuditService) waitForCompletion(auditID string) (*AuditResult, error) {
 			return nil, fmt.Errorf("failed to get audit status: %w", err)
 		}
 
-		log.Debug("Audit progress", 
+		log.Debug("Audit progress",
 			"status", status.Status,
 			"pages_analyzed", status.PagesAnalyzed,
 			"total_pages", len(status.Pages))
@@ -194,7 +193,7 @@ func (s *AuditService) ExportAuditPrompt(auditID string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to list audits: %w", err)
 	}
-	
+
 	var foundAudit interface{}
 	for _, la := range localAudits {
 		if la.ID == audit.ID {
@@ -202,13 +201,13 @@ func (s *AuditService) ExportAuditPrompt(auditID string) (string, error) {
 			break
 		}
 	}
-	
+
 	if foundAudit == nil {
 		return "", fmt.Errorf("audit not found: %s", audit.ID)
 	}
 
 	// Get page details for each page using the audit ID directly
-	var pageDetails []api.PageDetailsResponse
+	var pageDetails []export.PageDetailsResponse
 	for _, page := range audit.Pages {
 		details, err := s.processor.GetPageDetails(audit.ID, page.URL)
 		if err != nil {
@@ -216,31 +215,31 @@ func (s *AuditService) ExportAuditPrompt(auditID string) (string, error) {
 			continue
 		}
 
-		// Convert audit.PageDetails to api.PageDetailsResponse format
-		apiDetails := &api.PageDetailsResponse{
+		// Convert audit.PageDetails to export.PageDetailsResponse format
+		apiDetails := &export.PageDetailsResponse{
 			Status: "success",
 			Page: struct {
-				URL                string                 `json:"url"`
-				StatusCode         int                    `json:"status_code"`
-				Title              string                 `json:"title"`
-				MetaDescription    string                 `json:"meta_description"`
-				H1                 string                 `json:"h1"`
-				CanonicalURL       string                 `json:"canonical_url"`
-				WordCount          int                    `json:"word_count"`
-				SEOScore           float64                `json:"seo_score"`
-				AnalysisStatus     string                 `json:"analysis_status"`
-				Indexable          bool                   `json:"indexable"`
-				IndexabilityReason string                 `json:"indexability_reason"`
-				Checks             []api.SEOCheckResponse `json:"checks"`
-				AnalyzedAt         string                 `json:"analyzed_at,omitempty"`
-				IssuesCount        int                    `json:"issues_count"`
+				URL                string                   `json:"url"`
+				StatusCode         int                      `json:"status_code"`
+				Title              string                   `json:"title"`
+				MetaDescription    string                   `json:"meta_description"`
+				H1                 string                   `json:"h1"`
+				CanonicalURL       string                   `json:"canonical_url"`
+				WordCount          int                      `json:"word_count"`
+				SEOScore           float64                  `json:"seo_score"`
+				AnalysisStatus     string                   `json:"analysis_status"`
+				Indexable          bool                     `json:"indexable"`
+				IndexabilityReason string                   `json:"indexability_reason"`
+				Checks             []export.SEOCheckResponse `json:"checks"`
+				AnalyzedAt         string                   `json:"analyzed_at,omitempty"`
+				IssuesCount        int                      `json:"issues_count"`
 			}{
 				URL:                details.URL,
 				StatusCode:         details.StatusCode,
 				Title:              details.Title,
 				MetaDescription:    details.MetaDescription,
 				H1:                 details.H1,
-				CanonicalURL:       "", // Not available in audit.PageDetails
+				CanonicalURL:       "",
 				WordCount:          details.WordCount,
 				SEOScore:           func() float64 { if details.SEOScore != nil && *details.SEOScore > 0 { return *details.SEOScore }; return 0 }(),
 				AnalysisStatus:     details.AnalysisStatus,
@@ -299,12 +298,12 @@ func (s *AuditService) convertLocalAudit(audit *audit.LocalAudit) *AuditResult {
 	}
 }
 
-// convertChecks converts map[string]audit.CheckResult to []api.SEOCheckResponse
-func (s *AuditService) convertChecks(checks map[string]audit.CheckResult) []api.SEOCheckResponse {
-	result := make([]api.SEOCheckResponse, 0, len(checks))
-	
+// convertChecks converts map[string]audit.CheckResult to []export.SEOCheckResponse
+func (s *AuditService) convertChecks(checks map[string]audit.CheckResult) []export.SEOCheckResponse {
+	result := make([]export.SEOCheckResponse, 0, len(checks))
+
 	for name, check := range checks {
-		result = append(result, api.SEOCheckResponse{
+		result = append(result, export.SEOCheckResponse{
 			CheckName: name,
 			Passed:    check.Passed,
 			Value:     check.Value,
@@ -312,6 +311,6 @@ func (s *AuditService) convertChecks(checks map[string]audit.CheckResult) []api.
 			Weight:    check.Weight,
 		})
 	}
-	
+
 	return result
 }

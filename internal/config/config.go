@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -10,23 +9,11 @@ import (
 
 // Config represents the user's local configuration
 type Config struct {
-	APIKey                string   `yaml:"api_key" json:"api_key"`
 	DefaultPort           int      `yaml:"default_port" json:"default_port"`
 	DefaultConcurrency    int      `yaml:"default_concurrency" json:"default_concurrency"`
 	DefaultMaxPages       int      `yaml:"default_max_pages" json:"default_max_pages"`
 	DefaultMaxDepth       int      `yaml:"default_max_depth" json:"default_max_depth"`
 	DefaultIgnorePatterns []string `yaml:"default_ignore_patterns" json:"default_ignore_patterns"`
-}
-
-// GetEffectiveBaseURL returns the base URL to use, checking environment variable override first
-func (c *Config) GetEffectiveBaseURL() string {
-	// Check for environment variable override first (for development only)
-	if envURL := os.Getenv("SEO_BASE_URL"); envURL != "" {
-		return envURL
-	}
-
-	// Always use production URL for users
-	return "https://seofor.dev"
 }
 
 // getConfigPath returns the path to the config file
@@ -69,7 +56,7 @@ func LoadConfig() (*Config, error) {
 
 	// Fill in defaults for missing fields
 	fillDefaults(&config)
-	
+
 	return &config, nil
 }
 
@@ -95,18 +82,12 @@ func LoadOrCreateConfig() (*Config, error) {
 		return nil, err
 	}
 
-	// If this is a fresh config (no API key), we might want to save defaults
-	if config.APIKey == "" {
-		fillDefaults(config)
-	}
-
 	return config, nil
 }
 
 // GetDefaultConfig returns a config with default values
 func GetDefaultConfig() *Config {
 	config := &Config{
-		APIKey:             "",
 		DefaultPort:        3000,
 		DefaultConcurrency: 4,
 		DefaultMaxPages:    0,
@@ -116,7 +97,7 @@ func GetDefaultConfig() *Config {
 			"/admin",
 		},
 	}
-	
+
 	return config
 }
 
@@ -131,25 +112,4 @@ func fillDefaults(config *Config) {
 	if config.DefaultIgnorePatterns == nil {
 		config.DefaultIgnorePatterns = []string{"/api", "/admin"}
 	}
-}
-
-// ValidateAPIKeyWithMessage checks if API key is configured and shows setup message if not
-func ValidateAPIKeyWithMessage() (*Config, error) {
-	config, err := LoadOrCreateConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load configuration: %w", err)
-	}
-
-	if config.APIKey == "" {
-		return nil, fmt.Errorf(`API key required for this operation.
-
-Premium API key setup:
-  1. Subscribe to a plan: https://seofor.dev/payments/pricing
-  2. Get your API key: https://seofor.dev/dashboard  
-  3. Set your API key: seo config set-api-key <your-key>
-
-Run 'seo pro setup' for detailed setup instructions.`)
-	}
-
-	return config, nil
 }

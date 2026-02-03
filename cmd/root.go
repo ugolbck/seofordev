@@ -22,9 +22,7 @@ var rootCmd = &cobra.Command{
 
 This tool provides commands for:
 - Website auditing - run local SEO audits and export AI prompts to fix issues
-- Keyword research - generate keyword suggestions  
-- Content creation - generate SEO content briefs and export AI prompts to generate articles
-- Search Engine Indexation - notify search engines about your latest changes, and get quoted in ChatGPT
+- Search Engine Indexation - notify search engines about your latest changes
 
 Use the available commands below to get started, or run 'seo <command> --help' for detailed usage.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -52,32 +50,26 @@ Use the available commands below to get started, or run 'seo <command> --help' f
 			os.Exit(1)
 		}
 
-		fmt.Printf(`                    ___               _             
-                   / __)             | |            
-  ___ _____  ___ _| |__ ___   ____ __| |_____ _   _ 
+		fmt.Printf(`                    ___               _
+                   / __)             | |
+  ___ _____  ___ _| |__ ___   ____ __| |_____ _   _
  /___) ___ |/ _ (_   __) _ \ / ___) _  | ___ | | | |
-|___ | ____| |_| || | | |_| | |_ ( (_| | ____|\ V / 
-(___/|_____)\___/ |_|  \___/|_(_) \____|_____) \_/  
-                                                    
+|___ | ____| |_| || | | |_| | |_ ( (_| | ____|\ V /
+(___/|_____)\___/ |_|  \___/|_(_) \____|_____) \_/
+
 `)
 		fmt.Printf("🚀 SEO Tools CLI %s\n\n", version.GetVersion())
 
 		fmt.Printf("Available commands:\n")
-		fmt.Printf("  seo audit run            # Run localhost SEO audit (free)\n")
+		fmt.Printf("  seo audit run            # Run localhost SEO audit\n")
 		fmt.Printf("  seo audit list           # List audit history\n")
 		fmt.Printf("  seo config               # Show CLI configuration\n")
-		fmt.Printf("  seo keyword generate     # Generate keywords (premium)\n")
-		fmt.Printf("  seo brief generate       # Generate content briefs (premium)\n")
 		fmt.Printf("  seo index submit         # Submit URLs to search engines via IndexNow\n")
-		fmt.Printf("  seo pro status           # Check premium account status\n")
-		fmt.Printf("  seo pro setup            # Setup premium features\n")
 		fmt.Printf("  seo --help               # Show all commands\n\n")
 		fmt.Printf("Examples:\n")
 		fmt.Printf("  seo audit run                        # Audit localhost:3000\n")
 		fmt.Printf("  seo audit run --port 8080            # Audit localhost:8080\n")
-		fmt.Printf("  seo config                           # Show configuration\n")
-		fmt.Printf("  seo keyword generate \"coffee shop\"   # Generate keywords (premium)\n")
-		fmt.Printf("  seo pro status                       # Check premium account\n\n")
+		fmt.Printf("  seo config                           # Show configuration\n\n")
 	},
 }
 

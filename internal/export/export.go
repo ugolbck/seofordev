@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/atotto/clipboard"
-	"github.com/ugolbck/seofordev/internal/api"
 )
 
 // ExportToClipboard copies the given text to the system clipboard
@@ -50,7 +49,7 @@ func extractPathFromURL(rawURL string) string {
 }
 
 // FormatAIPromptFromMultiplePages creates an AI-ready prompt from multiple pages with their details
-func FormatAIPromptFromMultiplePages(pages []api.PageDetailsResponse) string {
+func FormatAIPromptFromMultiplePages(pages []PageDetailsResponse) string {
 	var prompt strings.Builder
 
 	// Introduction
@@ -125,9 +124,4 @@ func FormatAIPromptFromMultiplePages(pages []api.PageDetailsResponse) string {
 	}
 
 	return prompt.String()
-}
-
-// FormatContentBrief formats a content brief for display or export
-func FormatContentBrief(brief string) string {
-	return brief
 }
